@@ -21,13 +21,16 @@ public class OrderController {
     private final MenuService menuService;
     private final OrderRepository orderRepository;
     private final OrderService orderService;
+    private final OrderAggregator aggregator;
 
     public OrderController(MukjaProperties props, MenuService menuService,
-                           OrderRepository orderRepository, OrderService orderService) {
+                           OrderRepository orderRepository, OrderService orderService,
+                           OrderAggregator aggregator) {
         this.props = props;
         this.menuService = menuService;
         this.orderRepository = orderRepository;
         this.orderService = orderService;
+        this.aggregator = aggregator;
     }
 
     // 카테고리 선택 화면
@@ -98,4 +101,28 @@ public class OrderController {
 
     // 주문 제출 요청 바디
     public record SubmitRequest(String person, List<OrderService.LineInput> lines) {}
+
+    // 보드 집계 결과를 만든다 (헬퍼)
+    private dev.sybaek.mukja.order.domain.Aggregation aggregate(String category, String team) {
+        var data = menuService.data();
+        String place = data.place() != null ? data.place().name() : "";
+        return aggregator.aggregate(place, "커피", teamName(team), orderRepository.read(category, team));
+    }
+
+    // 집계/발주 화면
+    @GetMapping("/{category:coffee|food}/{team}/status")
+    public String status(@PathVariable String category, @PathVariable String team, Model model) {
+        model.addAttribute("category", category);
+        model.addAttribute("team", team);
+        model.addAttribute("teamName", teamName(team));
+        model.addAttribute("agg", aggregate(category, team));
+        return "order/status";
+    }
+
+    // 복사용 요약 텍스트
+    @GetMapping(value = "/{category:coffee|food}/{team}/status/summary.txt", produces = "text/plain;charset=UTF-8")
+    @ResponseBody
+    public String summary(@PathVariable String category, @PathVariable String team) {
+        return aggregate(category, team).summaryText();
+    }
 }

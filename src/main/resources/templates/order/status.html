@@ -1,0 +1,58 @@
+<!-- status.html — 당번 집계/발주 화면 -->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: page('mukja · 집계', ~{:: #content})}">
+<body>
+  <div id="content" th:fragment="content" class="p-3 space-y-4" th:with="s=${agg.stats}">
+    <header class="flex items-center justify-between">
+      <h1 class="font-bold" th:text="'☕ 커피 · ' + ${teamName}">집계</h1>
+      <button class="btn btn-sm btn-primary" onclick="copySummary(event)">주문 요약 복사</button>
+    </header>
+    <div class="stats shadow w-full text-center">
+      <div class="stat p-2"><div class="stat-title text-xs">인원</div>
+        <div class="stat-value text-lg" th:text="${s.people}">8</div></div>
+      <div class="stat p-2"><div class="stat-title text-xs">잔수</div>
+        <div class="stat-value text-lg" th:text="${s.cups}">12</div></div>
+      <div class="stat p-2"><div class="stat-title text-xs">총액</div>
+        <div class="stat-value text-lg" th:text="${#numbers.formatInteger(s.totalAmount,0,'COMMA')}">48,500</div></div>
+    </div>
+    <p class="text-xs opacity-70"
+       th:text="'1인당 약 ' + ${#numbers.formatInteger(s.perPersonAmount,0,'COMMA')} + '원'">1인당</p>
+
+    <section>
+      <h2 class="font-semibold mb-2">메뉴별</h2>
+      <div th:each="m : ${agg.byMenu}" class="card bg-base-200 p-3 mb-2">
+        <div class="flex justify-between"><span th:text="${m.name}">아메리카노</span>
+          <span class="badge" th:text="${m.totalCount} + '잔'">5잔</span></div>
+        <div class="text-xs opacity-70">
+          <span th:each="b, i : ${m.optionBreakdown}"
+                th:text="${b.key} + ' ' + ${b.value} + (${i.last} ? '' : ', ')">ICE 3</span>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="font-semibold mb-2">사람별 (배분용)</h2>
+      <div th:each="entry : ${agg.byPerson}" class="border-b py-2">
+        <div class="font-medium" th:text="${entry.key}">백상열</div>
+        <ul class="text-sm opacity-80">
+          <li th:each="line : ${entry.value}"
+              th:text="${line.name} + (${line.optionText.isEmpty()} ? '' : (' · ' + ${line.optionText}))">아메리카노 · ICE</li>
+        </ul>
+      </div>
+    </section>
+
+    <div id="sse" hx-ext="sse"
+         th:attr="sse-connect=@{/{c}/{t}/status/stream(c=${category},t=${team})}"></div>
+    <script>
+      // 요약 텍스트 클립보드 복사 (2초 완료 표시)
+      async function copySummary(ev) {
+        const res = await fetch(location.pathname + '/summary.txt');
+        await navigator.clipboard.writeText(await res.text());
+        const btn = ev.target; const old = btn.textContent;
+        btn.textContent = '복사됨 ✓'; setTimeout(() => btn.textContent = old, 2000);
+      }
+    </script>
+  </div>
+</body>
+</html>
