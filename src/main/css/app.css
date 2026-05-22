@@ -1,5 +1,5 @@
 /* src/main/css/app.css — Tailwind 4 입력. DaisyUI 5 플러그인 + Thymeleaf 템플릿 스캔 */
 @import "tailwindcss";
 @plugin "daisyui";
-@source "../../resources/templates";
-@source "../../resources/static/js";
+@source "../resources/templates";
+@source "../resources/static/js";

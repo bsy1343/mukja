@@ -1020,8 +1020,8 @@ git commit -m "feat: 주문 도메인 + 보드별 OrderRepository (마감/초기
 /* src/main/css/app.css — Tailwind 4 입력. DaisyUI 5 플러그인 + Thymeleaf 템플릿 스캔 */
 @import "tailwindcss";
 @plugin "daisyui";
-@source "../../resources/templates";
-@source "../../resources/static/js";
+@source "../resources/templates";
+@source "../resources/static/js";
 ```
 
 - [ ] **Step 3: 의존성 설치 및 CSS 빌드**
