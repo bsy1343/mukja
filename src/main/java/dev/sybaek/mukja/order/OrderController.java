@@ -3,22 +3,31 @@ package dev.sybaek.mukja.order;
 
 import dev.sybaek.mukja.config.MukjaProperties;
 import dev.sybaek.mukja.menu.MenuService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 @Controller
 public class OrderController {
     private final MukjaProperties props;
     private final MenuService menuService;
     private final OrderRepository orderRepository;
+    private final OrderService orderService;
 
-    public OrderController(MukjaProperties props, MenuService menuService, OrderRepository orderRepository) {
+    public OrderController(MukjaProperties props, MenuService menuService,
+                           OrderRepository orderRepository, OrderService orderService) {
         this.props = props;
         this.menuService = menuService;
         this.orderRepository = orderRepository;
+        this.orderService = orderService;
     }
 
     // 카테고리 선택 화면
@@ -73,4 +82,20 @@ public class OrderController {
         model.addAttribute("optionDefs", menuService.data().optionDefs());
         return "order/fragments/option-modal :: modal";
     }
+
+    // 주문 제출/수정 (HTMX/JSON). 마감 시 409
+    @PostMapping("/{category:coffee|food}/{team}/orders")
+    @ResponseBody
+    public ResponseEntity<String> submit(@PathVariable String category, @PathVariable String team,
+                                         @RequestBody SubmitRequest body) {
+        try {
+            orderService.submit(category, team, body.person(), body.lines());
+            return ResponseEntity.ok("ok");
+        } catch (BoardClosedException e) {
+            return ResponseEntity.status(409).body(e.getMessage());
+        }
+    }
+
+    // 주문 제출 요청 바디
+    public record SubmitRequest(String person, List<OrderService.LineInput> lines) {}
 }
