@@ -1,0 +1,17 @@
+<!-- menu-grid.html — 카테고리별 카드 그리드 fragment -->
+<div th:fragment="grid" xmlns:th="http://www.thymeleaf.org"
+     class="grid grid-cols-2 gap-2 p-3"
+     th:with="base=@{/{c}/{t}(c=${category}, t=${team})}">
+  <button th:each="item : ${subCategory.items}"
+          class="card bg-base-200 p-3 text-left active:scale-95 min-h-[44px]"
+          th:hx-get="${base} + '/menu/' + ${item.id} + '/options'"
+          hx-target="#opt-content" onclick="document.getElementById('opt-dialog').showModal()">
+    <div class="font-medium text-sm" th:text="${item.name}">아메리카노</div>
+    <div class="text-xs opacity-70" th:text="${#numbers.formatInteger(item.price,0,'COMMA')} + '원'">1,600원</div>
+    <div class="text-xs mt-1">
+      <span th:if="${item.fixedTemp == 'ice'}" class="badge badge-info badge-xs">ICE</span>
+      <span th:if="${item.fixedTemp == 'hot'}" class="badge badge-error badge-xs">HOT</span>
+      <span th:if="${item.fixedTemp == null}" class="badge badge-ghost badge-xs">HOT/ICE</span>
+    </div>
+  </button>
+</div>
