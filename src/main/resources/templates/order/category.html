@@ -1,0 +1,14 @@
+<!-- category.html — 카테고리 선택 (커피/음식) -->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: page('mukja · 카테고리', ~{:: #content})}">
+<body>
+  <div id="content" th:fragment="content" class="p-4">
+    <h1 class="text-xl font-bold mb-4">뭐 먹자? 🍽️</h1>
+    <div class="grid gap-3">
+      <a th:href="@{/coffee}" class="btn btn-lg btn-primary h-20 text-lg">☕ 커피</a>
+      <button class="btn btn-lg btn-disabled h-20 text-lg">🍱 음식 (준비중)</button>
+    </div>
+  </div>
+</body>
+</html>
