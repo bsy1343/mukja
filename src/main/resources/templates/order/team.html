@@ -1,0 +1,14 @@
+<!-- team.html — 팀 선택 ('전체' + 팀 버튼) -->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: page('mukja · 팀 선택', ~{:: #content})}">
+<body>
+  <div id="content" th:fragment="content" class="p-4">
+    <h1 class="text-xl font-bold mb-4" th:text="'☕ ' + ${categoryName} + ' · 팀 선택'">☕ 커피 · 팀 선택</h1>
+    <div class="grid gap-2">
+      <a th:each="team : ${teams}" th:href="@{/{c}/{t}(c=${category}, t=${team.id})}"
+         class="btn btn-outline justify-start h-12" th:text="${team.name}">팀</a>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,16 @@
+# docker-compose.yml — mukja 서비스 + data 볼륨
+services:
+  mukja:
+    build: .
+    container_name: mukja
+    ports:
+      - "8080:8080"
+    environment:
+      MUKJA_ADMIN_PIN: ${MUKJA_ADMIN_PIN:-1234}
+      TZ: Asia/Seoul
+    volumes:
+      - mukja-data:/data
+    restart: unless-stopped
+
+volumes:
+  mukja-data:

@@ -1,0 +1,23 @@
+<!-- option-modal.html — 옵션 선택 하단시트 모달 fragment -->
+<div th:fragment="modal" xmlns:th="http://www.thymeleaf.org" th:attr="data-item=${item.id},data-price=${item.price},data-name=${item.name}">
+  <h3 class="font-bold text-lg" th:text="${item.name}">아메리카노</h3>
+  <form id="opt-form" class="py-2 space-y-3">
+    <div th:each="optKey : ${item.options}" th:with="def=${optionDefs.get(optKey)}"
+         th:if="${!(optKey == 'temp' and item.fixedTemp != null)}">
+      <div class="text-sm font-medium" th:text="${def.label}">옵션</div>
+      <div th:if="${def.type == 'single'}" class="flex flex-wrap gap-1 mt-1">
+        <label th:each="ch : ${def.choices}" class="btn btn-sm">
+          <input type="radio" class="hidden" th:name="${optKey}" th:value="${ch.id}">
+          <span th:text="${ch.name}">HOT</span>
+        </label>
+      </div>
+      <input th:if="${def.type == 'toggle'}" type="checkbox" class="toggle mt-1" th:name="${optKey}">
+      <input th:if="${def.type == 'counter'}" type="number" min="0" th:max="${def.max}" value="0"
+             class="input input-bordered input-sm w-20 mt-1" th:name="${optKey}">
+    </div>
+  </form>
+  <div class="modal-action">
+    <button class="btn" onclick="document.getElementById('opt-dialog').close()">취소</button>
+    <button class="btn btn-primary" onclick="addToCart()">담기</button>
+  </div>
+</div>

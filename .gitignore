@@ -1,0 +1,24 @@
+.superpowers/
+
+# Gradle
+.gradle/
+build/
+
+# Java / IDE
+*.class
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+*.war
+*.ear
+
+# Data directory
+/data/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+node_modules/
+e2e/node_modules/
+e2e/test-results/
+e2e/playwright-report/

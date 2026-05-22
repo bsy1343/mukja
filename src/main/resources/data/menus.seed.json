@@ -1,0 +1,23 @@
+{
+  "place": { "id": "kt-bundang-cafe", "name": "KT그룹희망나눔재단 분당 카페", "floor": "21층" },
+  "optionDefs": {
+    "temp":  { "label": "HOT / ICE", "type": "single", "required": true,
+               "choices": [ {"id":"hot","name":"HOT","extra":0}, {"id":"ice","name":"ICE","extra":500} ] },
+    "ice":   { "label": "얼음", "type": "single", "required": false,
+               "choices": [ {"id":"ice_normal","name":"기본","extra":0}, {"id":"ice_none","name":"얼음 없음","extra":0},
+                            {"id":"ice_less","name":"얼음 적게","extra":0}, {"id":"ice_more","name":"얼음 많이","extra":0} ] },
+    "light": { "label": "연하게", "type": "toggle", "required": false, "extra": 0 },
+    "shot":  { "label": "샷 추가", "type": "counter", "required": false, "extra": 500, "max": 3 }
+  },
+  "categories": [
+    { "id": "coffee", "name": "커피", "group": "coffee", "items": [
+      { "id": 101, "name": "에스프레소", "price": 1500, "options": ["shot"], "fixedTemp": "hot" },
+      { "id": 102, "name": "아메리카노", "price": 1600, "options": ["temp","ice","light","shot"] },
+      { "id": 103, "name": "카페라떼", "price": 2100, "options": ["temp","ice","light","shot"] },
+      { "id": 104, "name": "바닐라라떼", "price": 2600, "options": ["temp","ice","light","shot"] }
+    ] },
+    { "id": "ade", "name": "에이드", "group": "coffee", "items": [
+      { "id": 201, "name": "자몽에이드", "price": 2800, "options": ["ice"], "fixedTemp": "ice" }
+    ] }
+  ]
+}

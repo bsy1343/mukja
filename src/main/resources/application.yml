@@ -1,0 +1,13 @@
+# application.yml — 애플리케이션 설정
+spring:
+  application:
+    name: mukja
+  jackson:
+    time-zone: Asia/Seoul
+mukja:
+  data-dir: ${MUKJA_DATA_DIR:./data}
+  admin-pin: ${MUKJA_ADMIN_PIN:1234}
+  teams:
+    - { id: all,  name: 전체 }
+    - { id: sa,   name: SA팀 }
+    - { id: imdg, name: IMDG팀 }

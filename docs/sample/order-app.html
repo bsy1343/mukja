@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>뭐먹을래 · KT 분당 카페 주문</title>
+<style>
+  :root {
+    --green: #1D9E75;
+    --green-dark: #0F6E56;
+    --green-light: #E1F5EE;
+    --amber: #BA7517;
+    --gray: #888780;
+    --bg: #F5F4EF;
+    --surface: #FFFFFF;
+    --line: #E4E2DA;
+    --line-strong: #D3D1C7;
+    --text: #2C2C2A;
+    --text-sub: #5F5E5A;
+    --text-hint: #94938C;
+    --radius: 14px;
+    --radius-sm: 10px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1A1A18;
+      --surface: #262624;
+      --line: #3A3A37;
+      --line-strong: #4A4A46;
+      --text: #ECEAE2;
+      --text-sub: #B4B2A9;
+      --text-hint: #888780;
+      --green-light: #15352B;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Malgun Gothic", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    padding-bottom: 90px;
+  }
+  .app { max-width: 480px; margin: 0 auto; min-height: 100vh; background: var(--bg); }
+
+  header {
+    background: var(--green);
+    padding: 16px 18px 14px;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+  }
+  .h-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .h-title { color: #fff; font-size: 17px; font-weight: 700; }
+  .h-sub { color: rgba(255,255,255,0.82); font-size: 12px; margin-top: 3px; }
+  .timer {
+    background: rgba(255,255,255,0.2); color: #fff; font-size: 12px; font-weight: 600;
+    padding: 5px 11px; border-radius: 99px; white-space: nowrap; flex-shrink: 0;
+  }
+  .timer.warn { background: var(--amber); }
+  .name-row { margin-top: 12px; display: flex; gap: 8px; align-items: center; }
+  .name-input {
+    flex: 1; border: none; border-radius: 99px; padding: 9px 15px; font-size: 14px;
+    background: rgba(255,255,255,0.95); color: #2C2C2A; outline: none;
+  }
+  .view-toggle {
+    background: rgba(255,255,255,0.2); border: none; color: #fff; font-size: 13px; font-weight: 600;
+    padding: 9px 14px; border-radius: 99px; cursor: pointer; white-space: nowrap;
+  }
+
+  .tabs {
+    display: flex; gap: 7px; padding: 13px 14px 9px; overflow-x: auto;
+    position: sticky; top: 86px; background: var(--bg); z-index: 20;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    font-size: 13px; padding: 8px 16px; border-radius: 99px; white-space: nowrap;
+    cursor: pointer; border: 1px solid var(--line-strong); background: var(--surface);
+    color: var(--text-sub); font-weight: 500; transition: all .12s;
+  }
+  .tab.on { background: var(--green); color: #fff; border-color: var(--green); font-weight: 700; }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 4px 14px 14px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm);
+    padding: 14px 13px; cursor: pointer; transition: all .12s; position: relative;
+  }
+  .card:active { transform: scale(0.97); }
+  .card.in-cart { border: 2px solid var(--green); background: var(--green-light); }
+  .card-name { font-size: 14px; font-weight: 700; line-height: 1.3; color: var(--text); }
+  .card-price { font-size: 13px; color: var(--text-sub); margin-top: 6px; font-weight: 500; }
+  .card-tag {
+    display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 99px;
+    margin-top: 8px; background: #E6F1FB; color: #0C447C; font-weight: 600;
+  }
+  @media (prefers-color-scheme: dark) {
+    .card-tag { background: #0C447C; color: #B5D4F4; }
+  }
+  .card-tag.ice { background: #E1F5EE; color: var(--green-dark); }
+  @media (prefers-color-scheme: dark) {
+    .card-tag.ice { background: #15352B; color: #5DCAA5; }
+  }
+  .card-qty {
+    position: absolute; top: 8px; right: 8px; background: var(--green); color: #fff;
+    font-size: 12px; font-weight: 700; width: 22px; height: 22px; border-radius: 99px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .sticky-bar {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 40;
+    max-width: 480px; margin: 0 auto; padding: 12px 14px 18px;
+    background: linear-gradient(to top, var(--bg) 70%, transparent);
+  }
+  .submit-btn {
+    width: 100%; background: var(--green); color: #fff; border: none; border-radius: var(--radius-sm);
+    padding: 16px; font-size: 15px; font-weight: 700; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .submit-btn:disabled { background: var(--gray); }
+  .submit-btn .amt { font-size: 16px; }
+
+  .modal-bg {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100;
+    display: none; align-items: flex-end; justify-content: center;
+  }
+  .modal-bg.open { display: flex; }
+  .modal {
+    background: var(--surface); width: 100%; max-width: 480px; border-radius: 20px 20px 0 0;
+    padding: 20px 18px calc(18px + env(safe-area-inset-bottom)); max-height: 85vh; overflow-y: auto;
+    animation: slideUp .22s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .modal-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+  .modal-name { font-size: 19px; font-weight: 700; }
+  .modal-price { font-size: 16px; color: var(--green-dark); font-weight: 700; margin-top: 2px; }
+  @media (prefers-color-scheme: dark) { .modal-price { color: #5DCAA5; } }
+  .modal-x { background: none; border: none; font-size: 26px; color: var(--text-hint); cursor: pointer; line-height: 1; }
+
+  .opt-block { margin-top: 18px; }
+  .opt-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 9px; }
+  .opt-title .req { color: #D4537E; font-size: 12px; margin-left: 4px; }
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pill {
+    border: 1px solid var(--line-strong); background: var(--surface); color: var(--text);
+    font-size: 14px; padding: 10px 18px; border-radius: 99px; cursor: pointer; font-weight: 500;
+  }
+  .pill.on { background: var(--green); color: #fff; border-color: var(--green); font-weight: 700; }
+  .counter-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; }
+  .counter-name { font-size: 14px; }
+  .counter-name .ex { color: var(--text-hint); font-size: 12px; margin-left: 4px; }
+  .stepper { display: flex; align-items: center; gap: 12px; }
+  .step-btn {
+    width: 34px; height: 34px; border-radius: 99px; border: 1px solid var(--line-strong);
+    background: var(--surface); color: var(--text); font-size: 19px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; line-height: 1;
+  }
+  .step-num { font-size: 15px; font-weight: 700; min-width: 18px; text-align: center; }
+  .modal-submit {
+    width: 100%; background: var(--green); color: #fff; border: none; border-radius: var(--radius-sm);
+    padding: 16px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 24px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .toggle-pill {
+    border: 1px solid var(--line-strong); background: var(--surface); color: var(--text);
+    font-size: 14px; padding: 10px 18px; border-radius: 99px; cursor: pointer; font-weight: 500;
+  }
+  .toggle-pill.on { background: var(--green); color: #fff; border-color: var(--green); font-weight: 700; }
+
+  /* 집계 화면 */
+  .agg { padding: 8px 14px 20px; display: none; }
+  .agg.show { display: block; }
+  .order-view { }
+  .order-view.hide { display: none; }
+  .agg-summary {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 16px; margin-bottom: 14px;
+  }
+  .agg-stat-row { display: flex; gap: 10px; }
+  .agg-stat { flex: 1; text-align: center; }
+  .agg-stat-num { font-size: 24px; font-weight: 700; color: var(--green-dark); }
+  @media (prefers-color-scheme: dark) { .agg-stat-num { color: #5DCAA5; } }
+  .agg-stat-lbl { font-size: 12px; color: var(--text-sub); margin-top: 2px; }
+  .agg-section-title { font-size: 14px; font-weight: 700; margin: 18px 4px 10px; }
+  .agg-item {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm);
+    padding: 13px 15px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: flex-start;
+  }
+  .agg-item-name { font-size: 14px; font-weight: 700; }
+  .agg-item-opt { font-size: 12px; color: var(--text-hint); margin-top: 4px; line-height: 1.5; }
+  .agg-item-cnt { font-size: 16px; font-weight: 700; color: var(--green-dark); white-space: nowrap; }
+  @media (prefers-color-scheme: dark) { .agg-item-cnt { color: #5DCAA5; } }
+  .copy-btn {
+    width: 100%; background: var(--surface); border: 1px solid var(--line-strong); color: var(--text);
+    border-radius: var(--radius-sm); padding: 14px; font-size: 14px; font-weight: 600; cursor: pointer;
+    margin: 14px 0; display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .copy-btn.done { background: var(--green); color: #fff; border-color: var(--green); }
+  .person-row {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm);
+    padding: 12px 15px; margin-bottom: 8px;
+  }
+  .person-name { font-size: 14px; font-weight: 700; }
+  .person-order { font-size: 13px; color: var(--text-sub); margin-top: 4px; }
+  .empty { text-align: center; color: var(--text-hint); font-size: 14px; padding: 40px 0; }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="h-top">
+      <div>
+        <div class="h-title">오후 커피 · 21층</div>
+        <div class="h-sub">KT그룹희망나눔재단 분당 카페</div>
+      </div>
+      <div class="timer" id="timer">14:30 마감</div>
+    </div>
+    <div class="name-row">
+      <input class="name-input" id="nameInput" placeholder="이름을 입력하세요" />
+      <button class="view-toggle" id="viewToggle">당번 집계</button>
+    </div>
+  </header>
+
+  <div class="order-view" id="orderView">
+    <div class="tabs" id="tabs"></div>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <div class="agg" id="aggView">
+    <div class="agg-summary">
+      <div class="agg-stat-row">
+        <div class="agg-stat"><div class="agg-stat-num" id="statPeople">0</div><div class="agg-stat-lbl">참여 인원</div></div>
+        <div class="agg-stat"><div class="agg-stat-num" id="statCups">0</div><div class="agg-stat-lbl">총 잔수</div></div>
+        <div class="agg-stat"><div class="agg-stat-num" id="statTotal">0</div><div class="agg-stat-lbl">예상 총액</div></div>
+      </div>
+    </div>
+    <button class="copy-btn" id="copyBtn">주문 요약 복사 (키오스크/전화용)</button>
+    <div class="agg-section-title">메뉴별 집계</div>
+    <div id="aggMenu"></div>
+    <div class="agg-section-title">사람별 주문</div>
+    <div id="aggPeople"></div>
+  </div>
+
+  <div class="sticky-bar order-view" id="stickyBar">
+    <button class="submit-btn" id="cartBtn" disabled>
+      <span id="cartLabel">메뉴를 선택하세요</span>
+      <span class="amt" id="cartAmt"></span>
+    </button>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal" id="modal"></div>
+</div>
+
+<script>
+const DATA = {
+  optionDefs: {
+    temp: { label: "HOT / ICE", type: "single", required: true, choices: [
+      { id: "hot", name: "HOT", extra: 0 }, { id: "ice", name: "ICE", extra: 500 } ] },
+    ice: { label: "얼음", type: "single", required: false, choices: [
+      { id: "ice_normal", name: "기본", extra: 0 }, { id: "ice_none", name: "얼음 없음", extra: 0 },
+      { id: "ice_less", name: "얼음 적게", extra: 0 }, { id: "ice_more", name: "얼음 많이", extra: 0 } ] },
+    light: { label: "연하게", type: "toggle", required: false, extra: 0 },
+    shot: { label: "샷 추가", type: "counter", required: false, extra: 500, max: 3 }
+  },
+  categories: [
+    { id: "coffee", name: "커피", items: [
+      { id:101, name:"에스프레소", price:1600, options:["shot"], fixedTemp:"hot" },
+      { id:102, name:"아메리카노", price:1600, options:["temp","ice","light","shot"] },
+      { id:103, name:"시즌 아메리카노", price:2000, options:["temp","ice","light","shot"] },
+      { id:104, name:"카페라떼", price:2600, options:["temp","ice","light","shot"] },
+      { id:105, name:"시즌 카페라떼", price:3000, options:["temp","ice","light","shot"] },
+      { id:106, name:"카페모카", price:2700, options:["temp","ice","light","shot"] },
+      { id:107, name:"카푸치노", price:2700, options:["temp","ice","light","shot"] },
+      { id:108, name:"바닐라라떼", price:2700, options:["temp","ice","light","shot"] },
+      { id:109, name:"헤이즐넛라떼", price:2700, options:["temp","ice","light","shot"] },
+      { id:110, name:"카라멜마끼야또", price:2700, options:["temp","ice","light","shot"] } ] },
+    { id: "decaf", name: "디카페인", items: [
+      { id:201, name:"디카페인 에스프레소", price:2100, options:["shot"], fixedTemp:"hot" },
+      { id:202, name:"디카페인 아메리카노", price:2100, options:["temp","ice","light","shot"] },
+      { id:203, name:"디카페인 카페라떼", price:3100, options:["temp","ice","light","shot"] },
+      { id:204, name:"디카페인 카페모카", price:3200, options:["temp","ice","light","shot"] },
+      { id:205, name:"디카페인 카푸치노", price:3200, options:["temp","ice","light","shot"] },
+      { id:206, name:"디카페인 바닐라라떼", price:3200, options:["temp","ice","light","shot"] },
+      { id:207, name:"디카페인 헤이즐넛라떼", price:3200, options:["temp","ice","light","shot"] },
+      { id:208, name:"디카페인 카라멜마끼야또", price:3200, options:["temp","ice","light","shot"] } ] },
+    { id: "tea", name: "티", items: [
+      { id:301, name:"얼그레이", price:2000, options:["temp"] },
+      { id:302, name:"카모마일", price:2000, options:["temp"] },
+      { id:303, name:"페퍼민트", price:2000, options:["temp"] },
+      { id:304, name:"히비스커스", price:2000, options:["temp"] },
+      { id:305, name:"레몬차", price:2500, options:["temp"] },
+      { id:306, name:"유자차", price:2500, options:["temp"] },
+      { id:307, name:"자몽차", price:2500, options:["temp"] },
+      { id:308, name:"꿀생강차", price:2700, options:["temp"] },
+      { id:309, name:"아이스홍초", price:3500, options:["ice"], fixedTemp:"ice" },
+      { id:310, name:"복숭아 아이스티", price:3000, options:["ice"], fixedTemp:"ice" },
+      { id:311, name:"아샷추", price:3500, options:["ice"], fixedTemp:"ice" },
+      { id:312, name:"애사비캐모마일티", price:3500, options:["ice"], fixedTemp:"ice" } ] },
+    { id: "noncoffee", name: "논커피", items: [
+      { id:401, name:"밀크티", price:3000, options:["temp","ice"] },
+      { id:402, name:"녹차라떼", price:3000, options:["temp","ice"] },
+      { id:403, name:"초코라떼", price:3000, options:["temp","ice"] },
+      { id:404, name:"오곡라떼", price:3500, options:["ice"], fixedTemp:"ice" },
+      { id:405, name:"우유", price:1700, options:[] } ] },
+    { id: "ade", name: "에이드", items: [
+      { id:501, name:"레몬에이드", price:3200, options:["ice"], fixedTemp:"ice" },
+      { id:502, name:"자몽에이드", price:3200, options:["ice"], fixedTemp:"ice" },
+      { id:503, name:"청포도에이드", price:3200, options:["ice"], fixedTemp:"ice" },
+      { id:504, name:"자두에이드", price:3200, options:["ice"], fixedTemp:"ice" } ] },
+    { id: "smoothie", name: "스무디", items: [
+      { id:601, name:"플레인요거트 스무디", price:3800, options:["ice"], fixedTemp:"ice" },
+      { id:602, name:"블루베리요거트 스무디", price:3800, options:["ice"], fixedTemp:"ice" },
+      { id:603, name:"딸기스무디", price:3800, options:["ice"], fixedTemp:"ice" } ] }
+  ]
+};
+
+let activeCat = "coffee";
+let myCart = [];
+let allOrders = [
+  { person: "김광호", items: [
+    { itemId:102, name:"아메리카노", price:1600, opts:{temp:"ice",shot:1}, optText:"ICE·샷추가", lineTotal:2100 } ] },
+  { person: "이수진", items: [
+    { itemId:104, name:"카페라떼", price:2600, opts:{temp:"hot"}, optText:"HOT", lineTotal:2600 } ] },
+  { person: "박民", items: [
+    { itemId:102, name:"아메리카노", price:1600, opts:{temp:"ice"}, optText:"ICE", lineTotal:2100 },
+    { itemId:501, name:"레몬에이드", price:3200, opts:{}, optText:"ICE", lineTotal:3200 } ] }
+];
+let modalState = null;
+const won = n => n.toLocaleString("ko-KR");
+
+function findItem(id) {
+  for (const c of DATA.categories) { const it = c.items.find(i=>i.id===id); if (it) return it; }
+  return null;
+}
+
+function renderTabs() {
+  document.getElementById("tabs").innerHTML = DATA.categories.map(c =>
+    `<div class="tab ${c.id===activeCat?'on':''}" onclick="setCat('${c.id}')">${c.name}</div>`).join("");
+}
+function setCat(id) { activeCat = id; renderTabs(); renderGrid(); }
+
+function cartQty(itemId) { return myCart.filter(c=>c.itemId===itemId).reduce((s,c)=>s+1,0); }
+
+function renderGrid() {
+  const cat = DATA.categories.find(c=>c.id===activeCat);
+  document.getElementById("grid").innerHTML = cat.items.map(it => {
+    const q = cartQty(it.id);
+    let tag = "";
+    if (it.fixedTemp==="ice") tag = `<span class="card-tag ice">ICE only</span>`;
+    else if (it.fixedTemp==="hot") tag = `<span class="card-tag">HOT</span>`;
+    else if (it.options.includes("temp")) tag = `<span class="card-tag">HOT/ICE</span>`;
+    return `<div class="card ${q>0?'in-cart':''}" onclick="openModal(${it.id})">
+      ${q>0?`<div class="card-qty">${q}</div>`:""}
+      <div class="card-name">${it.name}</div>
+      <div class="card-price">${won(it.price)}원</div>
+      ${tag}
+    </div>`;
+  }).join("");
+}
+
+function openModal(id) {
+  const it = findItem(id);
+  modalState = { item: it, sel: {}, shot: 0, light: false };
+  if (it.fixedTemp) modalState.sel.temp = it.fixedTemp;
+  renderModal();
+  document.getElementById("modalBg").classList.add("open");
+}
+function closeModal() { document.getElementById("modalBg").classList.remove("open"); modalState=null; }
+
+function modalPrice() {
+  const it = modalState.item;
+  let p = it.price;
+  if (modalState.sel.temp === "ice" && !it.fixedTemp) p += DATA.optionDefs.temp.choices.find(c=>c.id==="ice").extra;
+  p += modalState.shot * DATA.optionDefs.shot.extra;
+  return p;
+}
+
+function renderModal() {
+  const it = modalState.item;
+  let html = `<div class="modal-head">
+    <div><div class="modal-name">${it.name}</div><div class="modal-price">${won(it.price)}원</div></div>
+    <button class="modal-x" onclick="closeModal()">&times;</button></div>`;
+
+  for (const optKey of it.options) {
+    const def = DATA.optionDefs[optKey];
+    if (optKey === "temp" && it.fixedTemp) continue;
+    if (def.type === "single") {
+      html += `<div class="opt-block"><div class="opt-title">${def.label}${def.required?'<span class="req">필수</span>':''}</div><div class="pills">`;
+      html += def.choices.map(ch =>
+        `<div class="pill ${modalState.sel[optKey]===ch.id?'on':''}" onclick="selOpt('${optKey}','${ch.id}')">${ch.name}${ch.extra?` (+${ch.extra})`:''}</div>`).join("");
+      html += `</div></div>`;
+    } else if (def.type === "toggle") {
+      html += `<div class="opt-block"><div class="opt-title">${def.label}</div>
+        <div class="toggle-pill ${modalState.light?'on':''}" onclick="toggleLight()">연하게 ${modalState.light?'✓':''}</div></div>`;
+    } else if (def.type === "counter") {
+      html += `<div class="opt-block"><div class="counter-row">
+        <div class="counter-name">${def.label}<span class="ex">+${def.extra}원/개</span></div>
+        <div class="stepper">
+          <button class="step-btn" onclick="changeShot(-1)">−</button>
+          <span class="step-num">${modalState.shot}</span>
+          <button class="step-btn" onclick="changeShot(1)">+</button>
+        </div></div></div>`;
+    }
+  }
+
+  const needsTemp = it.options.includes("temp") && !it.fixedTemp;
+  const ready = !needsTemp || modalState.sel.temp;
+  html += `<button class="modal-submit" ${ready?'':'disabled style="background:var(--gray)"'} onclick="addToCart()">
+    <span>${ready?'담기':'HOT/ICE를 선택하세요'}</span><span>${won(modalPrice())}원</span></button>`;
+  document.getElementById("modal").innerHTML = html;
+}
+function selOpt(k,v) { modalState.sel[k]=v; renderModal(); }
+function toggleLight() { modalState.light=!modalState.light; renderModal(); }
+function changeShot(d) {
+  modalState.shot = Math.max(0, Math.min(DATA.optionDefs.shot.max, modalState.shot+d));
+  renderModal();
+}
+
+function optText(it, sel, shot, light) {
+  const parts = [];
+  if (sel.temp) parts.push(sel.temp==="ice"?"ICE":"HOT");
+  if (sel.ice && sel.ice!=="ice_normal") parts.push(DATA.optionDefs.ice.choices.find(c=>c.id===sel.ice).name);
+  if (light) parts.push("연하게");
+  if (shot>0) parts.push(`샷+${shot}`);
+  return parts.join("·") || "기본";
+}
+
+function addToCart() {
+  const it = modalState.item;
+  const line = {
+    itemId: it.id, name: it.name, price: it.price,
+    opts: { temp: modalState.sel.temp, ice: modalState.sel.ice, light: modalState.light, shot: modalState.shot },
+    optText: optText(it, modalState.sel, modalState.shot, modalState.light),
+    lineTotal: modalPrice()
+  };
+  myCart.push(line);
+  closeModal();
+  renderGrid();
+  renderCartBar();
+}
+
+function renderCartBar() {
+  const btn = document.getElementById("cartBtn");
+  if (myCart.length === 0) {
+    btn.disabled = true;
+    document.getElementById("cartLabel").textContent = "메뉴를 선택하세요";
+    document.getElementById("cartAmt").textContent = "";
+    return;
+  }
+  btn.disabled = false;
+  const total = myCart.reduce((s,c)=>s+c.lineTotal,0);
+  const label = myCart.length===1 ? `${myCart[0].name} 담기` : `${myCart[0].name} 외 ${myCart.length-1}건 주문`;
+  document.getElementById("cartLabel").textContent = label;
+  document.getElementById("cartAmt").textContent = won(total)+"원";
+  btn.onclick = submitOrder;
+}
+
+function submitOrder() {
+  const name = document.getElementById("nameInput").value.trim();
+  if (!name) { alert("이름을 입력해주세요"); document.getElementById("nameInput").focus(); return; }
+  const existing = allOrders.find(o=>o.person===name);
+  if (existing) existing.items = [...myCart];
+  else allOrders.push({ person: name, items: [...myCart] });
+  myCart = [];
+  renderGrid();
+  renderCartBar();
+  showAgg();
+}
+
+// 집계
+let aggMode = false;
+function toggleView() { aggMode ? showOrder() : showAgg(); }
+function showAgg() {
+  aggMode = true;
+  document.getElementById("orderView").classList.add("hide");
+  document.getElementById("aggView").classList.add("show");
+  document.getElementById("stickyBar").style.display = "none";
+  document.getElementById("viewToggle").textContent = "주문하기";
+  renderAgg();
+}
+function showOrder() {
+  aggMode = false;
+  document.getElementById("orderView").classList.remove("hide");
+  document.getElementById("aggView").classList.remove("show");
+  document.getElementById("stickyBar").style.display = "block";
+  document.getElementById("viewToggle").textContent = "당번 집계";
+}
+
+function renderAgg() {
+  const people = allOrders.length;
+  let cups = 0, total = 0;
+  const menuMap = {};
+  for (const o of allOrders) for (const ln of o.items) {
+    cups++; total += ln.lineTotal;
+    const key = ln.name;
+    if (!menuMap[key]) menuMap[key] = { count:0, opts:{} };
+    menuMap[key].count++;
+    menuMap[key].opts[ln.optText] = (menuMap[key].opts[ln.optText]||0)+1;
+  }
+  document.getElementById("statPeople").textContent = people;
+  document.getElementById("statCups").textContent = cups;
+  document.getElementById("statTotal").textContent = won(total);
+
+  document.getElementById("aggMenu").innerHTML = Object.entries(menuMap).map(([name,info]) => {
+    const optStr = Object.entries(info.opts).map(([o,c])=>`${o} ${c}`).join(" · ");
+    return `<div class="agg-item"><div><div class="agg-item-name">${name}</div>
+      <div class="agg-item-opt">${optStr}</div></div>
+      <div class="agg-item-cnt">${info.count}잔</div></div>`;
+  }).join("") || `<div class="empty">아직 주문이 없어요</div>`;
+
+  document.getElementById("aggPeople").innerHTML = allOrders.map(o => {
+    const orderStr = o.items.map(ln=>`${ln.name}(${ln.optText})`).join(", ");
+    return `<div class="person-row"><div class="person-name">${o.person}</div>
+      <div class="person-order">${orderStr}</div></div>`;
+  }).join("") || `<div class="empty">아직 주문이 없어요</div>`;
+}
+
+function copySummary() {
+  const menuMap = {};
+  for (const o of allOrders) for (const ln of o.items) {
+    if (!menuMap[ln.name]) menuMap[ln.name] = { count:0, opts:{} };
+    menuMap[ln.name].count++;
+    menuMap[ln.name].opts[ln.optText] = (menuMap[ln.name].opts[ln.optText]||0)+1;
+  }
+  let txt = "[KT 분당 카페 주문]\n";
+  for (const [name,info] of Object.entries(menuMap)) {
+    const optStr = Object.entries(info.opts).map(([o,c])=>`${o} ${c}`).join(", ");
+    txt += `· ${name} ${info.count}잔 (${optStr})\n`;
+  }
+  const total = allOrders.reduce((s,o)=>s+o.items.reduce((a,l)=>a+l.lineTotal,0),0);
+  txt += `합계 ${won(total)}원`;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const b = document.getElementById("copyBtn");
+    b.textContent = "복사됐어요! 키오스크에 입력하세요";
+    b.classList.add("done");
+    setTimeout(()=>{ b.textContent="주문 요약 복사 (키오스크/전화용)"; b.classList.remove("done"); }, 2000);
+  });
+}
+
+document.getElementById("viewToggle").onclick = toggleView;
+document.getElementById("copyBtn").onclick = copySummary;
+document.getElementById("modalBg").onclick = e => { if (e.target.id==="modalBg") closeModal(); };
+
+renderTabs();
+renderGrid();
+renderCartBar();
+</script>
+</body>
+</html>
