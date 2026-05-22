@@ -31,7 +31,7 @@ public class PriceCalculator {
                         .filter(c -> c.id().equals(String.valueOf(value)))
                         .mapToInt(OptionChoice::extra).findFirst().orElse(0);
             }
-            case "toggle" -> Boolean.TRUE.equals(value) ? def.extra() : 0;
+            case "toggle" -> (Boolean.TRUE.equals(value) && def.extra() != null) ? def.extra() : 0;
             case "counter" -> ((Number) value).intValue() * def.extra();
             default -> 0;
         };

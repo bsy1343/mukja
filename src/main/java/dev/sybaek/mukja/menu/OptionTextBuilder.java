@@ -19,12 +19,15 @@ public class OptionTextBuilder {
             Object value = selected.get(key);
             if (def == null || value == null) continue;
             switch (def.type()) {
+                // 매칭된 단일선택 보기는 가산금액과 무관하게 모두 표시한다 (예: 얼음량 '기본'도 노출)
                 case "single" -> def.choices().stream()
                         .filter(c -> c.id().equals(String.valueOf(value)))
-                        .findFirst().ifPresent(c -> { if (c.extra() >= 0) parts.add(c.name()); });
+                        .findFirst().ifPresent(c -> parts.add(c.name()));
                 case "toggle" -> { if (Boolean.TRUE.equals(value)) parts.add(def.label()); }
                 case "counter" -> {
                     int n = ((Number) value).intValue();
+                    // NOTE: 현재 counter 옵션은 '샷'뿐이라 라벨을 하드코딩한다.
+                    // 다른 counter 옵션이 추가되면 OptionDef에 표시용 라벨을 두고 데이터 주도로 바꿀 것.
                     if (n > 0) parts.add("샷+" + n);
                 }
             }
