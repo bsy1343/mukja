@@ -134,4 +134,34 @@ public class OrderController {
             @PathVariable String category, @PathVariable String team) {
         return sse.subscribe(category, team);
     }
+
+    // 마감 시각 설정/해제 (PIN 없음). time이 "HH:MM"이면 오늘 KST 기준으로 설정, null/빈값이면 해제
+    @PostMapping("/{category:coffee|food}/{team}/deadline")
+    @ResponseBody
+    public String deadline(@PathVariable String category, @PathVariable String team,
+                           @RequestBody DeadlineRequest body) {
+        if (body.time() == null || body.time().isBlank()) {
+            orderRepository.clearDeadline(category, team);
+        } else {
+            var parts = body.time().split(":");
+            var now = java.time.OffsetDateTime.now(java.time.ZoneId.of("Asia/Seoul"));
+            var close = now.withHour(Integer.parseInt(parts[0])).withMinute(Integer.parseInt(parts[1]))
+                    .withSecond(0).withNano(0);
+            orderRepository.setDeadline(category, team, close);
+        }
+        sse.broadcast(category, team);
+        return "ok";
+    }
+
+    // 주문판 초기화 (PIN 없음)
+    @PostMapping("/{category:coffee|food}/{team}/reset")
+    @ResponseBody
+    public String reset(@PathVariable String category, @PathVariable String team) {
+        orderRepository.reset(category, team);
+        sse.broadcast(category, team);
+        return "ok";
+    }
+
+    // 마감 설정 요청 바디
+    public record DeadlineRequest(String time) {}
 }
