@@ -6,9 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.nio.file.Path;
-import java.util.List;
 import java.util.concurrent.*;
-import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,11 +34,10 @@ class JsonStoreTest {
                 new ObjectMapper(), () -> new Box(0));
         int n = 200;
         ExecutorService pool = Executors.newFixedThreadPool(16);
-        @SuppressWarnings("unchecked")
-        List<Future<?>> futures = (List<Future<?>>) (List<?>) IntStream.range(0, n)
-                .mapToObj(i -> pool.submit(() ->
-                        store.update(cur -> { store.writeUnlocked(new Box(cur.value() + 1)); return null; })))
-                .toList();
+        java.util.List<Future<?>> futures = new java.util.ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            futures.add(pool.submit(() -> store.mutate(cur -> new Box(cur.value() + 1))));
+        }
         for (Future<?> f : futures) f.get();
         pool.shutdown();
         assertEquals(n, store.read().value());
