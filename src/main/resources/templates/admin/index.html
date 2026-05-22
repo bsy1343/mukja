@@ -1,0 +1,23 @@
+<!-- index.html — 관리자 메인 (메뉴 목록) -->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>mukja · 메뉴 관리</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="bg-base-200 min-h-screen">
+  <main class="mx-auto max-w-[480px] p-4">
+    <h1 class="font-bold mb-3">메뉴 관리</h1>
+    <div th:each="cat : ${menu.categories}" class="mb-3">
+      <h2 class="font-semibold" th:text="${cat.name}">커피</h2>
+      <ul class="text-sm">
+        <li th:each="i : ${cat.items}"
+            th:text="${i.name} + ' — ' + ${#numbers.formatInteger(i.price,0,'COMMA')} + '원'">아메리카노 — 1,600원</li>
+      </ul>
+    </div>
+    <p class="text-xs opacity-60">메뉴 편집은 data/menus.json을 직접 수정 후 재기동. (인라인 편집은 후속)</p>
+  </main>
+</body>
+</html>

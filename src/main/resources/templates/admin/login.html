@@ -1,0 +1,17 @@
+<!-- login.html — 관리자 PIN 입력 -->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>mukja · 관리자</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="bg-base-200 min-h-screen">
+  <form method="post" th:action="@{/admin/auth}" class="max-w-xs mx-auto mt-20 p-4 space-y-2">
+    <h1 class="font-bold mb-2">관리자 PIN</h1>
+    <input name="pin" type="password" class="input input-bordered w-full" placeholder="PIN">
+    <button class="btn btn-primary w-full">입력</button>
+  </form>
+</body>
+</html>
