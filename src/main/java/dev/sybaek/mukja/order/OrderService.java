@@ -7,6 +7,7 @@ import dev.sybaek.mukja.menu.PriceCalculator;
 import dev.sybaek.mukja.menu.domain.MenuItem;
 import dev.sybaek.mukja.order.domain.OrderEntry;
 import dev.sybaek.mukja.order.domain.OrderLine;
+import dev.sybaek.mukja.order.sse.OrderSseService;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -19,10 +20,11 @@ public class OrderService {
     private final MenuService menu;
     private final PriceCalculator price;
     private final OptionTextBuilder optionText;
+    private final OrderSseService sse;
 
     public OrderService(OrderRepository repo, MenuService menu,
-                        PriceCalculator price, OptionTextBuilder optionText) {
-        this.repo = repo; this.menu = menu; this.price = price; this.optionText = optionText;
+                        PriceCalculator price, OptionTextBuilder optionText, OrderSseService sse) {
+        this.repo = repo; this.menu = menu; this.price = price; this.optionText = optionText; this.sse = sse;
     }
 
     // 한 줄 주문 입력 (itemId + 선택옵션)
@@ -38,5 +40,6 @@ public class OrderService {
             return new OrderLine(item.id(), item.name(), item.price(), in.options(), text, total);
         }).toList();
         repo.submit(category, team, new OrderEntry(person, OffsetDateTime.now(), lines));
+        sse.broadcast(category, team);
     }
 }

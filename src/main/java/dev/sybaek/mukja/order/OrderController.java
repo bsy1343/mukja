@@ -22,15 +22,17 @@ public class OrderController {
     private final OrderRepository orderRepository;
     private final OrderService orderService;
     private final OrderAggregator aggregator;
+    private final dev.sybaek.mukja.order.sse.OrderSseService sse;
 
     public OrderController(MukjaProperties props, MenuService menuService,
                            OrderRepository orderRepository, OrderService orderService,
-                           OrderAggregator aggregator) {
+                           OrderAggregator aggregator, dev.sybaek.mukja.order.sse.OrderSseService sse) {
         this.props = props;
         this.menuService = menuService;
         this.orderRepository = orderRepository;
         this.orderService = orderService;
         this.aggregator = aggregator;
+        this.sse = sse;
     }
 
     // 카테고리 선택 화면
@@ -124,5 +126,12 @@ public class OrderController {
     @ResponseBody
     public String summary(@PathVariable String category, @PathVariable String team) {
         return aggregate(category, team).summaryText();
+    }
+
+    // SSE 구독 (보드별 실시간 갱신)
+    @GetMapping("/{category:coffee|food}/{team}/status/stream")
+    public org.springframework.web.servlet.mvc.method.annotation.SseEmitter stream(
+            @PathVariable String category, @PathVariable String team) {
+        return sse.subscribe(category, team);
     }
 }
