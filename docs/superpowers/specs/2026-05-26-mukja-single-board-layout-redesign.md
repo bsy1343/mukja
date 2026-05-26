@@ -14,9 +14,18 @@
 ## 범위 (Scope)
 
 - **레이아웃/네비게이션 구조만** 변경. 색·폰트·DaisyUI 라이트 테마·카드 스타일 등 **감성은 현행 유지**.
-- 모바일 우선(최대 480px). 왼쪽 카테고리는 **슬라이드아웃 햄버거 드로어**(DaisyUI `drawer`).
+- 모바일 우선(최대 480px). 왼쪽 카테고리는 **슬라이드아웃 햄버거 드로어**.
 - 집계는 **별도 페이지 대신 주문판 안의 토글 패널**로 통합(옵션 A).
 - 백엔드 도메인·저장소·집계 로직·SSE·주문 API는 **변경하지 않는다**. 컨트롤러 라우팅과 템플릿만 손본다.
+
+### 스타일링 방식 — npm-free (확정: 옵션 ③)
+
+> **제약: npm/CDN 없이 Spring Boot 단일.** Tailwind CLI 빌드를 **다시 돌리지 않는다.**
+
+- 이미 커밋된 `src/main/resources/static/css/app.css`(56KB, Tailwind 유틸 + DaisyUI 컴포넌트)를 **그대로 사용**. 런타임은 이미 npm/CDN 비의존.
+- 신규 컴포넌트(드로어 등 컴파일 안 된 클래스)는 **손으로 쓴 평문 CSS**로 추가 → 새 정적 파일 `static/css/app-custom.css`, `layout.html`에서 `app.css` **뒤에** 링크(오버라이드 가능). 빌드 단계 없음, 직접 편집.
+- 세그먼트 토글 `[주문|집계]`는 **이미 컴파일된 `tabs`/`btn` 클래스로 구성**해 신규 클래스 최소화(`join`/`tab` 단일 클래스 회피).
+- `package.json`·Tailwind 입력(`src/main/css/app.css`)·Dockerfile node 스테이지는 **남겨두되 호출하지 않는다**(휴면). Docker `--build` 시 node 스테이지가 app.css를 재생성하는 동작은 손수 쓴 `app-custom.css`를 건드리지 않음 — 다만 npm-free 철학을 끝까지 적용할지(노드 스테이지 제거)는 후속 결정으로 남긴다.
 
 ### 비목표 (Non-goals)
 - 색상/타이포/테마 변경, 다크모드.
@@ -56,9 +65,9 @@
 
 ### 컴포넌트
 
-1. **드로어 셸** — DaisyUI `drawer`. 본문 전체를 `drawer-content`로 감싸고, `drawer-side`에 카테고리 목록. 햄버거(☰) 토글. 모바일에서 좌측에서 슬라이드, 480px 컨테이너 안에서 동작.
-2. **상단 바(sticky)** — 햄버거, **팀 드롭다운**(DaisyUI `select` 또는 `dropdown`; 변경 시 `/{category}/{newTeam}` 이동), **이름 입력**(기존 `#person` 유지 — order.js가 참조). 마감 뱃지/카운트다운 유지.
-3. **세그먼트 토글 `[주문 | 집계]`** — 두 버튼(DaisyUI `join` 또는 `tabs`). `주문`은 메뉴 그리드 영역, `집계`는 `hx-get`으로 `/{c}/{t}/status` fragment를 메인 영역에 swap.
+1. **드로어 셸** — **손수 쓴 CSS**(`app-custom.css`). 좌측 패널 + 백드롭을 `position:fixed`, `transform: translateX(-100%)` → 열림 시 `0`, `transition`. 토글은 숨김 체크박스 `:checked` 또는 `body.drawer-open` 클래스. 햄버거(☰). 480px 컨테이너 안에서 동작. (DaisyUI `drawer` 미사용 — 미컴파일이라 npm 필요)
+2. **상단 바(sticky)** — 햄버거, **팀 드롭다운**(DaisyUI `select` — 이미 컴파일됨; 변경 시 `/{category}/{newTeam}` 이동), **이름 입력**(기존 `#person` 유지 — order.js가 참조). 마감 뱃지/카운트다운 유지.
+3. **세그먼트 토글 `[주문 | 집계]`** — 이미 컴파일된 `tabs`/`tabs-boxed` 컨테이너 + 활성 상태는 `btn-primary`/`bg-primary` 조합으로 구성(신규 클래스 회피). `주문`은 메뉴 그리드 영역, `집계`는 `hx-get`으로 `/{c}/{t}/status` fragment를 메인 영역에 swap.
 4. **주문 영역** — 기존 서브카테고리 탭 nav + `#menu-grid`(menu-grid fragment) 그대로 재사용.
 5. **집계 영역** — 기존 `status.html`의 본문을 fragment(`order/status :: panel`)로 분리해 swap. **당번 컨트롤(마감설정/해제/초기화)을 이 패널 헤더로 이동**(주문 화면에서는 제거). 요약 복사 버튼·SSE 구독 포함.
 6. **카트바** — 현행 유지하되 **주문 모드에서만 표시**(집계 모드에서는 숨김).
@@ -92,8 +101,8 @@
 - `board.html` — 드로어 셸 + 상단 바(드롭다운/이름) + 세그먼트 토글 + 주문영역 + 집계영역 swap 타깃으로 재작성.
 - `status.html` — 본문을 `th:fragment="panel"` 로 감싸 fragment/전체 페이지 양쪽에서 재사용. 당번 컨트롤 추가.
 - `category.html`, `team.html` — 삭제.
-- `order.js` — 팀 드롭다운 `onchange` 이동 핸들러, 주문/집계 토글 시 카트바 show/hide 로직 추가.
-- CSS — **`npm run build:css` 1회 필요**. 컴파일된 `static/css/app.css` 확인 결과: `dropdown`/`select`/`tabs`/`btn`/`card`/`stat`/`badge`/`modal`/`input`/`toggle`/`menu` 는 **이미 포함**, `drawer`/`drawer-side`/`drawer-content` 와 `join`/`tab` 은 **미포함**. 따라서 좌측 드로어 도입 시 재빌드 후 `static/css/app.css` 커밋. 세그먼트 토글은 이미 있는 `btn`/`tabs`로 구성하면 추가 클래스 최소화 가능. npm/node는 로컬 설치됨, `package.json`·Dockerfile node 스테이지에 이미 존재(신규 의존성 아님).
+- `order.js` — 팀 드롭다운 `onchange` 이동 핸들러, 주문/집계 토글 시 카트바 show/hide 로직 추가. 드로어 열고닫기는 순수 CSS(숨김 체크박스 `:checked ~ ...` 또는 클래스 토글) 권장 — JS 최소화.
+- CSS — **`npm run build:css` 안 함**. 컴파일된 `static/css/app.css` 확인 결과 이미 포함: `dropdown`/`select`/`tabs`/`btn`/`card`/`stat`/`badge`/`modal`/`input`/`toggle`/`menu`. 미포함: `drawer*`, `join`/`tab`(단일). → 드로어는 **손수 쓴 `static/css/app-custom.css`** 에 평문 CSS로 구현(위치 fixed, `transform: translateX`, transition, 백드롭). 세그먼트 토글은 이미 있는 `tabs`/`btn`로 구성. `layout.html`에 `app-custom.css` 링크 추가(`app.css` 뒤).
 
 ## 테스트 영향 (반드시 갱신)
 
