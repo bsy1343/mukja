@@ -16,7 +16,7 @@ class MenuRepositoryTest {
         repo.init();
         assertTrue(Files.exists(dir.resolve("menus.json")));
         MenuData data = repo.load();
-        assertEquals(2, data.categories().size());
+        assertEquals(6, data.categories().size());
     }
 
     @Test

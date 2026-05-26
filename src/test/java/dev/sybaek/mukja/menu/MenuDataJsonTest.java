@@ -14,9 +14,9 @@ class MenuDataJsonTest {
         MenuData data = new ObjectMapper().readValue(
                 new ClassPathResource("data/menus.seed.json").getInputStream(), MenuData.class);
         assertEquals("kt-bundang-cafe", data.place().id());
-        assertEquals(2, data.categories().size());
+        assertEquals(6, data.categories().size());
         assertEquals("coffee", data.categories().get(0).group());
-        assertEquals("ice", data.categories().get(1).items().get(0).fixedTemp());
+        assertEquals("hot", data.categories().get(1).items().get(0).fixedTemp());
         assertTrue(data.optionDefs().containsKey("temp"));
         assertEquals(500, data.optionDefs().get("shot").extra());
     }
