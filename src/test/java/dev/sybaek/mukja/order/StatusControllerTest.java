@@ -40,4 +40,12 @@ class StatusControllerTest {
            .andExpect(content().string(containsString("[KT")))
            .andExpect(content().string(containsString("1명")));
     }
+
+    @Test
+    void statusFragmentForHtmxRequest() throws Exception {
+        mvc.perform(get("/coffee/stat-team/status").header("HX-Request", "true"))
+           .andExpect(status().isOk())
+           .andExpect(content().string(containsString("아메리카노")))
+           .andExpect(content().string(org.hamcrest.Matchers.not(containsString("<html"))));
+    }
 }

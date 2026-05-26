@@ -32,10 +32,10 @@ Spring Boot 3.5 + Thymeleaf SSR + HTMX 부분 갱신, 데이터는 보드별 JSO
 - 모든 시각 KST(Asia/Seoul) 직렬화 (`spring.jackson.time-zone`)
 
 ## API Endpoints
-- 네비: `GET /`(카테고리), `GET /{category}`(팀 선택), `GET /{category}/{team}`(주문판)
+- 네비: `GET /`→`/{기본팀}` 리다이렉트, `GET /{category}`→`/{category}/{기본팀}` 리다이렉트, `GET /{category}/{team}`(단일 주문판: 좌측 카테고리 드로어 + 상단 팀 드롭다운/이름 + 주문/집계 토글)
 - 주문: `POST /{category}/{team}/orders` (JSON, 마감 시 409)
 - 메뉴 fragment: `GET /{category}/{team}/menu?cat={sub}`, `GET /{category}/{team}/menu/{itemId}/options`
-- 집계: `GET /{category}/{team}/status`, `/status/summary.txt`, `/status/stream`(SSE)
+- 집계: `GET /{category}/{team}/status`(HTMX `HX-Request` 헤더면 `order/status :: panel` fragment, 아니면 전체 페이지), `/status/summary.txt`, `/status/stream`(SSE)
 - 당번(PIN 없음): `POST /{category}/{team}/deadline`, `POST /{category}/{team}/reset`
 - 관리(PIN 보호): `GET /admin/login`, `POST /admin/auth`, `GET /admin`(메뉴 조회)
 - `@GetMapping`의 category 세그먼트는 `{category:coffee|food}` 정규식으로 제약 — static(`/css`,`/js`,`/webjars`) 경로 보호
@@ -45,7 +45,7 @@ Spring Boot 3.5 + Thymeleaf SSR + HTMX 부분 갱신, 데이터는 보드별 JSO
 - Java 21 record 적극 활용, 생성자 주입, Lombok 미사용. 두 개 이상의 생성자를 가진 빈은 주입 생성자에 `@Autowired` 필수.
 - 마감·초기화는 권한 없음(1차, 팀 내부 신뢰 전제). 계좌/금융정보 저장 금지 — 이름·주문만 보관.
 - 템플릿 레이아웃: 전체 페이지는 `<html th:replace="~{layout :: page('제목', ~{:: #content})}">` + `<div id="content" th:fragment="content">`. fragment 응답은 `뷰 :: fragment` 반환.
-- 템플릿/JS에 새 Tailwind·DaisyUI 클래스를 쓰면 `npm run build:css` 재빌드 후 `static/css/app.css`를 커밋 (Tailwind가 `@source`로 템플릿을 스캔해 트리셰이킹함).
+- **스타일은 npm/CDN 없이 운영**: 기존 `static/css/app.css`(Tailwind+DaisyUI 산출물)는 동결해 그대로 사용하고 재빌드하지 않는다. 새 스타일이 필요하면 손수 쓴 평문 CSS를 `static/css/app-custom.css`(layout.html에서 app.css 뒤 로드)에 추가한다. 미컴파일 DaisyUI 클래스(`drawer*`, `select-bordered/sm` 등)는 쓰지 말고 app-custom.css로 직접 스타일링한다.
 - 커밋: 한 커밋에 한 관심사.
 
 ## Operational Decisions

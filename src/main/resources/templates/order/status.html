@@ -1,13 +1,27 @@
-<!-- status.html — 당번 집계/발주 화면 -->
+<!-- status.html — 집계/발주. 전체 페이지 + #agg-view에 swap되는 panel fragment 겸용 -->
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout :: page('mukja · 집계', ~{:: #content})}">
 <body>
-  <div id="content" th:fragment="content" class="p-3 space-y-4" th:with="s=${agg.stats}">
+  <div id="content" th:fragment="content">
+    <div th:replace="~{:: panel}">집계</div>
+  </div>
+
+  <!-- panel: 보드의 집계 뷰로 swap되는 조각 -->
+  <div th:fragment="panel" class="p-3 space-y-4"
+       th:with="s=${agg.stats}">
     <header class="flex items-center justify-between">
       <h1 class="font-bold" th:text="'☕ 커피 · ' + ${teamName}">집계</h1>
       <button class="btn btn-sm btn-primary" onclick="copySummary(event)">주문 요약 복사</button>
     </header>
+
+    <!-- 당번 컨트롤 (주문 화면에서 이동) -->
+    <div class="flex gap-1">
+      <button class="btn btn-xs flex-1" onclick="setDeadline()">마감 설정</button>
+      <button class="btn btn-xs flex-1" onclick="clearDeadline()">마감 해제</button>
+      <button class="btn btn-xs btn-warning flex-1" onclick="resetBoard()">초기화</button>
+    </div>
+
     <div class="stats shadow w-full text-center">
       <div class="stat p-2"><div class="stat-title text-xs">인원</div>
         <div class="stat-value text-lg" th:text="${s.people}">8</div></div>
@@ -18,6 +32,13 @@
     </div>
     <p class="text-xs opacity-70"
        th:text="'1인당 약 ' + ${#numbers.formatInteger(s.perPersonAmount,0,'COMMA')} + '원'">1인당</p>
+
+    <!-- 미주문자 (팀 명단이 있을 때만) -->
+    <div th:if="${agg.expected > 0}" class="text-sm font-medium p-2 bg-base-200">
+      <span th:if="${agg.missing.isEmpty()}">✅ 전원 주문 완료 (<span th:text="${agg.expected}">5</span>명)</span>
+      <span th:unless="${agg.missing.isEmpty()}"
+            th:text="'🔔 미주문 ' + ${agg.missing.size()} + '명 · ' + ${#strings.listJoin(agg.missing, ', ')}">🔔 미주문 2명 · 홍길동, 김철수</span>
+    </div>
 
     <section>
       <h2 class="font-semibold mb-2">메뉴별</h2>
@@ -44,15 +65,6 @@
 
     <div id="sse" hx-ext="sse"
          th:attr="sse-connect=@{/{c}/{t}/status/stream(c=${category},t=${team})}"></div>
-    <script>
-      // 요약 텍스트 클립보드 복사 (2초 완료 표시)
-      async function copySummary(ev) {
-        const res = await fetch(location.pathname + '/summary.txt');
-        await navigator.clipboard.writeText(await res.text());
-        const btn = ev.target; const old = btn.textContent;
-        btn.textContent = '복사됨 ✓'; setTimeout(() => btn.textContent = old, 2000);
-      }
-    </script>
   </div>
 </body>
 </html>

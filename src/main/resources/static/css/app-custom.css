@@ -1,0 +1,23 @@
+/* app-custom.css — npm 빌드 없이 손수 쓴 보강 스타일. app.css 뒤에 로드되어 미컴파일 클래스를 대체한다. */
+
+/* 팀 드롭다운 (DaisyUI select 모디파이어가 트리셰이크되어 미컴파일 → 직접 스타일) */
+.board-select {
+  height: 2rem; min-width: 5rem; padding: 0 1.75rem 0 .6rem;
+  border: 1px solid #d1d5db; border-radius: .5rem; background-color: #fff;
+  font-size: .875rem; line-height: 1; color: inherit; appearance: none; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' fill='none' stroke='%236b7280' stroke-width='1.6'%3E%3Cpath d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right .4rem center;
+}
+
+/* 카테고리 슬라이드 드로어 (DaisyUI drawer 미컴파일 → 손수 구현) */
+#cat-drawer {
+  position: fixed; top: 0; left: 0; bottom: 0; width: 15rem; max-width: 80vw;
+  background: #fff; box-shadow: 2px 0 12px rgba(0,0,0,.15); z-index: 50;
+  transform: translateX(-100%); transition: transform .25s ease; overflow-y: auto;
+}
+#cat-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 40;
+  opacity: 0; pointer-events: none; transition: opacity .25s ease;
+}
+body.drawer-open #cat-drawer { transform: translateX(0); }
+body.drawer-open #cat-backdrop { opacity: 1; pointer-events: auto; }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -23,29 +24,31 @@ public class OrderController {
     private final OrderService orderService;
     private final OrderAggregator aggregator;
     private final dev.sybaek.mukja.order.sse.OrderSseService sse;
+    private final TeamRosterRepository rosterRepository;
 
     public OrderController(MukjaProperties props, MenuService menuService,
                            OrderRepository orderRepository, OrderService orderService,
-                           OrderAggregator aggregator, dev.sybaek.mukja.order.sse.OrderSseService sse) {
+                           OrderAggregator aggregator, dev.sybaek.mukja.order.sse.OrderSseService sse,
+                           TeamRosterRepository rosterRepository) {
         this.props = props;
         this.menuService = menuService;
         this.orderRepository = orderRepository;
         this.orderService = orderService;
         this.aggregator = aggregator;
         this.sse = sse;
+        this.rosterRepository = rosterRepository;
     }
 
-    // 카테고리 선택 화면
+    // 루트 → 기본 보드로 리다이렉트
     @GetMapping("/")
-    public String category() { return "order/category"; }
+    public String root() {
+        return "redirect:/coffee/" + props.teams().get(0).id();
+    }
 
-    // 팀 선택 화면 (정규식으로 알려진 카테고리만 매핑 — static 경로 보호)
+    // 카테고리 단독 경로 → 해당 카테고리 기본 팀 보드로 리다이렉트
     @GetMapping("/{category:coffee|food}")
-    public String team(@PathVariable String category, Model model) {
-        model.addAttribute("category", category);
-        model.addAttribute("categoryName", "커피");
-        model.addAttribute("teams", props.teams());
-        return "order/team";
+    public String categoryRedirect(@PathVariable String category) {
+        return "redirect:/" + category + "/" + props.teams().get(0).id();
     }
 
     // 팀 표시 이름 조회 (없으면 id 그대로)
@@ -54,17 +57,29 @@ public class OrderController {
                 .map(MukjaProperties.Team::name).findFirst().orElse(teamId);
     }
 
-    // 주문판 화면
+    // 주문판 화면 (단일 레이아웃)
     @GetMapping("/{category:coffee|food}/{team}")
     public String board(@PathVariable String category, @PathVariable String team, Model model) {
         var board = orderRepository.read(category, team);
         model.addAttribute("category", category);
         model.addAttribute("team", team);
         model.addAttribute("teamName", teamName(team));
+        model.addAttribute("teams", props.teams());
+        model.addAttribute("topCategories", topCategories(category));
         model.addAttribute("subCategories", menuService.categoriesIn(category));
         model.addAttribute("closeAt", board.closeAt());
         return "order/board";
     }
+
+    // 상단 드로어용 상위 카테고리 (해당 group에 데이터가 있으면 활성)
+    private java.util.List<TopCategory> topCategories(String current) {
+        return java.util.List.of(
+            new TopCategory("coffee", "☕ 커피", !menuService.categoriesIn("coffee").isEmpty(), current.equals("coffee")),
+            new TopCategory("food", "🍱 점심", !menuService.categoriesIn("food").isEmpty(), current.equals("food")));
+    }
+
+    // 드로어 항목 (id, 표시명, 활성여부, 현재선택여부)
+    public record TopCategory(String id, String name, boolean available, boolean current) {}
 
     // 서브카테고리 메뉴 그리드 fragment
     @GetMapping("/{category:coffee|food}/{team}/menu")
@@ -108,17 +123,20 @@ public class OrderController {
     private dev.sybaek.mukja.order.domain.Aggregation aggregate(String category, String team) {
         var data = menuService.data();
         String place = data.place() != null ? data.place().name() : "";
-        return aggregator.aggregate(place, "커피", teamName(team), orderRepository.read(category, team));
+        return aggregator.aggregate(place, "커피", teamName(team),
+                orderRepository.read(category, team), rosterRepository.membersOf(team));
     }
 
-    // 집계/발주 화면
+    // 집계/발주 화면. HTMX 요청이면 panel fragment, 아니면 전체 페이지
     @GetMapping("/{category:coffee|food}/{team}/status")
-    public String status(@PathVariable String category, @PathVariable String team, Model model) {
+    public String status(@PathVariable String category, @PathVariable String team,
+                         @RequestHeader(value = "HX-Request", required = false) String hxRequest,
+                         Model model) {
         model.addAttribute("category", category);
         model.addAttribute("team", team);
         model.addAttribute("teamName", teamName(team));
         model.addAttribute("agg", aggregate(category, team));
-        return "order/status";
+        return hxRequest != null ? "order/status :: panel" : "order/status";
     }
 
     // 복사용 요약 텍스트

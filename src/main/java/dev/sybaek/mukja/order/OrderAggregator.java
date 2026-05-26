@@ -10,8 +10,14 @@ import java.util.stream.Collectors;
 
 @Component
 public class OrderAggregator {
-    // 장소·카테고리·팀 라벨과 보드 데이터로 집계 결과를 만든다
+    // (호환) 팀 명단 없이 집계한다
     public Aggregation aggregate(String place, String categoryName, String teamName, BoardData board) {
+        return aggregate(place, categoryName, teamName, board, List.of());
+    }
+
+    // 장소·카테고리·팀 라벨, 보드 데이터, 팀 기대 명단(roster)으로 집계 결과를 만든다
+    public Aggregation aggregate(String place, String categoryName, String teamName,
+                                 BoardData board, List<String> roster) {
         var lines = board.orders().stream().flatMap(o -> o.lines().stream()).toList();
 
         // 메뉴별 집계 (등장 순서 유지)
@@ -33,13 +39,24 @@ public class OrderAggregator {
         int people = board.orders().size();
         Stats stats = new Stats(people, lines.size(), total, people == 0 ? 0 : total / people);
 
+        // 미주문자: 명단 − 주문한 이름(공백 제거 후 정확 일치), 명단 순서 유지
+        Set<String> ordered = board.orders().stream()
+                .map(o -> o.person() == null ? "" : o.person().trim())
+                .collect(Collectors.toSet());
+        List<String> roaster = roster == null ? List.of() : roster;
+        List<String> missing = roaster.stream()
+                .filter(n -> n != null && !n.isBlank())
+                .filter(n -> !ordered.contains(n.trim())).toList();
+        int expected = (int) roaster.stream().filter(n -> n != null && !n.isBlank()).count();
+
         return new Aggregation(byMenu, byPerson, stats,
-                summary(place, categoryName, teamName, byMenu, stats));
+                summary(place, categoryName, teamName, byMenu, stats, missing, expected),
+                missing, expected);
     }
 
-    // 복사용 요약 텍스트 생성
+    // 복사용 요약 텍스트 생성 (명단이 있으면 미주문자 줄 추가)
     private String summary(String place, String categoryName, String teamName,
-                           List<MenuAgg> byMenu, Stats stats) {
+                           List<MenuAgg> byMenu, Stats stats, List<String> missing, int expected) {
         NumberFormat nf = NumberFormat.getInstance(Locale.KOREA);
         StringBuilder sb = new StringBuilder();
         sb.append("[").append(place).append(" · ").append(categoryName)
@@ -52,6 +69,12 @@ public class OrderAggregator {
         }
         sb.append("합계 ").append(nf.format(stats.totalAmount())).append("원 · ")
           .append(stats.people()).append("명");
+        if (expected > 0) {
+            sb.append("\n");
+            if (missing.isEmpty()) sb.append("미주문 0명 (전원 주문)");
+            else sb.append("미주문 ").append(missing.size()).append("명: ")
+                   .append(String.join(", ", missing));
+        }
         return sb.toString();
     }
 

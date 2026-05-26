@@ -35,5 +35,29 @@ class OrderAggregatorTest {
         assertEquals(2, agg.byPerson().get("백상열").size());
         assertTrue(agg.summaryText().contains("[KT 분당 카페 · 커피 · SA팀]"));
         assertFalse(agg.summaryText().contains("8명"));
+        assertEquals(0, agg.expected());
+        assertTrue(agg.missing().isEmpty());
+    }
+
+    @Test
+    void detectsMissingFromRoster() {
+        var board = new BoardData(null, List.of(
+            e("백상열", l("아메리카노", "ICE", 1600)),
+            e(" 김철수 ", l("카페라떼", "HOT", 2100)))); // 공백 포함 → trim 후 일치
+        var roster = List.of("백상열", "김철수", "홍길동", "이영희");
+        var agg = new OrderAggregator().aggregate("KT", "커피", "SA팀", board, roster);
+
+        assertEquals(4, agg.expected());
+        assertEquals(List.of("홍길동", "이영희"), agg.missing()); // 명단 순서 유지
+        assertTrue(agg.summaryText().contains("미주문 2명: 홍길동, 이영희"));
+    }
+
+    @Test
+    void allOrderedShowsNoMissing() {
+        var board = new BoardData(null, List.of(e("백상열", l("아메리카노", "ICE", 1600))));
+        var agg = new OrderAggregator().aggregate("KT", "커피", "SA팀", board, List.of("백상열"));
+        assertEquals(1, agg.expected());
+        assertTrue(agg.missing().isEmpty());
+        assertTrue(agg.summaryText().contains("미주문 0명 (전원 주문)"));
     }
 }
