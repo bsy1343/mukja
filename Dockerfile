@@ -1,19 +1,23 @@
-# Dockerfile — multi-stage: JAR 빌드 → 실행 (CSS는 정적 산출물을 그대로 사용, Node 불필요)
-# 1) Gradle 래퍼로 bootJar 빌드 (JDK 21)
+# DevForge 멀티스테이지 빌드
+# CI:     docker build --target ci .
+# Deploy: docker build -t devforge . && docker run -d devforge
+
+# Stage 1: 빌드
 FROM eclipse-temurin:21-jdk AS build
 WORKDIR /app
-COPY gradlew settings.gradle.kts build.gradle.kts ./
-COPY gradle ./gradle
-RUN ./gradlew --version --no-daemon
-COPY src ./src
-RUN ./gradlew bootJar --no-daemon
+COPY pom.xml mvnw ./
+COPY .mvn .mvn
+RUN chmod +x mvnw && ./mvnw dependency:go-offline -B
+COPY src src
+RUN ./mvnw package -DskipTests -B
 
-# 2) 실행 (JRE 21)
-FROM eclipse-temurin:21-jre AS run
+# Stage 2: CI 검증 (빌드 + 테스트)
+FROM build AS ci
+RUN ./mvnw test -B
+
+# Stage 3: 런타임
+FROM eclipse-temurin:21-jre AS runtime
 WORKDIR /app
-COPY --from=build /app/build/libs/*.jar app.jar
-ENV MUKJA_DATA_DIR=/data
-ENV TZ=Asia/Seoul
-VOLUME /data
+COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]

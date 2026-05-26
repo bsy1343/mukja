@@ -8,6 +8,7 @@ mukja:
   data-dir: ${MUKJA_DATA_DIR:./data}
   admin-pin: ${MUKJA_ADMIN_PIN:1234}
   teams:
-    - { id: all,  name: 전체 }
-    - { id: sa,   name: SA팀 }
-    - { id: imdg, name: IMDG팀 }
+    - { id: ice,     name: ICE }
+    - { id: kos,     name: KOS }
+    - { id: icis,    name: ICIS }
+    - { id: vivaldi, name: 비발디 }

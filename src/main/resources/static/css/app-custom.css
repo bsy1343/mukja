@@ -1,13 +1,43 @@
 /* app-custom.css — npm 빌드 없이 손수 쓴 보강 스타일. app.css 뒤에 로드되어 미컴파일 클래스를 대체한다. */
 
-/* 팀 드롭다운 (DaisyUI select 모디파이어가 트리셰이크되어 미컴파일 → 직접 스타일) */
+/* 상단 컨트롤 공통 톤 */
+:root { --mukja-line: #d8d6cd; --mukja-green: oklch(62% 0.12 163); }
+
+/* 팀/팀원 셀렉트 (DaisyUI select 모디파이어 미컴파일 → 직접 스타일) */
 .board-select {
-  height: 2rem; min-width: 5rem; padding: 0 1.75rem 0 .6rem;
-  border: 1px solid #d1d5db; border-radius: .5rem; background-color: #fff;
-  font-size: .875rem; line-height: 1; color: inherit; appearance: none; cursor: pointer;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' fill='none' stroke='%236b7280' stroke-width='1.6'%3E%3Cpath d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: right .4rem center;
+  height: 2.4rem; min-width: 4.5rem; max-width: 100%; padding: 0 2rem 0 .75rem;
+  border: 1px solid var(--mukja-line); border-radius: .7rem; background-color: #fff;
+  font-size: .9rem; line-height: 1; color: #2c2c2a; appearance: none; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' fill='none' stroke='%236b7280' stroke-width='1.7'%3E%3Cpath d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right .55rem center; background-size: 1.05rem;
 }
+.board-select:focus { outline: none; border-color: var(--mukja-green); box-shadow: 0 0 0 3px color-mix(in oklch, var(--mukja-green) 22%, transparent); }
+
+/* 이름 직접입력란 */
+.board-input {
+  height: 2.4rem; padding: 0 .8rem; border: 1px solid var(--mukja-line); border-radius: .7rem;
+  background: #fff; font-size: .9rem; color: #2c2c2a;
+}
+.board-input:focus { outline: none; border-color: var(--mukja-green); box-shadow: 0 0 0 3px color-mix(in oklch, var(--mukja-green) 22%, transparent); }
+
+/* 햄버거 아이콘 버튼 */
+.icon-btn {
+  width: 2.4rem; height: 2.4rem; flex-shrink: 0; border: none; background: transparent;
+  border-radius: .7rem; font-size: 1.25rem; line-height: 1; color: #2c2c2a; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.icon-btn:active { background: #f0efe9; }
+
+/* 주문/집계 세그먼트 토글 */
+.seg { display: flex; gap: .25rem; background: #efeee8; border-radius: .8rem; padding: .25rem; }
+.seg-btn {
+  flex: 1; border: none; background: transparent; border-radius: .6rem; padding: .5rem 0;
+  font-size: .9rem; font-weight: 600; color: #6b6a64; cursor: pointer; transition: all .15s;
+}
+.seg-on { background: #fff; color: var(--mukja-green); box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+
+/* 이미 주문 칩 */
+.ordered-chip { color: var(--mukja-green); font-weight: 700; }
 
 /* 카테고리 슬라이드 드로어 (DaisyUI drawer 미컴파일 → 손수 구현) */
 #cat-drawer {
@@ -21,3 +51,37 @@
 }
 body.drawer-open #cat-drawer { transform: translateX(0); }
 body.drawer-open #cat-backdrop { opacity: 1; pointer-events: auto; }
+
+/* 브랜드 컬러: DaisyUI primary를 카페 그린으로 덮어씀 (btn-primary 등 전역 적용) */
+:root, [data-theme] {
+  --color-primary: oklch(62% 0.12 163);
+  --color-primary-content: oklch(100% 0 0);
+}
+
+/* 메뉴 카드: 장바구니에 담긴 항목 강조 + 수량 뱃지 */
+.menu-card { position: relative; }
+.menu-card.in-cart {
+  border: 2px solid oklch(62% 0.12 163);
+  background: oklch(95% 0.03 163);
+}
+.menu-card .card-qty {
+  position: absolute; top: 6px; right: 6px;
+  min-width: 1.25rem; height: 1.25rem; padding: 0 .35rem;
+  background: oklch(62% 0.12 163); color: #fff;
+  font-size: .7rem; font-weight: 700; line-height: 1.25rem;
+  text-align: center; border-radius: 999px;
+}
+
+/* 옵션 모달: 필수 표시 + 샷 스테퍼 */
+.req { color: #d4537e; font-size: .75rem; margin-left: .25rem; }
+.step-btn {
+  width: 2rem; height: 2rem; border-radius: 999px;
+  border: 1px solid #d1d5db; background: #fff; color: inherit;
+  font-size: 1.1rem; line-height: 1; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.step-btn:active { transform: scale(.92); }
+.step-num { width: 2rem; text-align: center; font-weight: 700; font-size: 1rem; }
+
+/* 빈 상태 */
+.empty-state { text-align: center; color: #94938c; font-size: .9rem; padding: 2rem 0; }

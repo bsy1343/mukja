@@ -22,7 +22,7 @@ Spring Boot 3.5 + Thymeleaf SSR + HTMX 부분 갱신, 데이터는 보드별 JSO
 - **데이터 주도 설계**: 가격/옵션텍스트는 `PriceCalculator`/`OptionTextBuilder`가 `menus.json`의 optionDefs로 계산 — menus.json만 바꾸면 화면·계산이 따라온다.
 - 메뉴 카테고리는 `group: "coffee"|"food"`로 상위 카테고리를 구분. 음식은 데이터만 추가하면 동작(현재 커피만).
 - 실시간: `OrderSseService`(보드별 SseEmitter) + `order.js`의 EventSource 구독, 실패 시 5초 폴링 폴백.
-- 패키지: `dev.sybaek.mukja` — `common/store`(JsonStore), `config`(MukjaProperties/Jackson/Web/AdminPin), `menu`, `order`(+`order.sse`), `admin`.
+- 패키지: `com.mukja` — `common/store`(JsonStore), `config`(MukjaProperties/Jackson/Web/AdminPin), `menu`, `order`(+`order.sse`), `admin`.
 
 ## Key Configuration
 - `mukja.data-dir` (기본 `./data`, env `MUKJA_DATA_DIR`)

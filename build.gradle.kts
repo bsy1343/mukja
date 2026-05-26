@@ -4,7 +4,7 @@ plugins {
     id("org.springframework.boot") version "3.5.3"
     id("io.spring.dependency-management") version "1.1.7"
 }
-group = "dev.sybaek"
+group = "com.mukja"
 version = "0.1.0"
 java {
     toolchain { languageVersion = JavaLanguageVersion.of(21) }

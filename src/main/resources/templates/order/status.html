@@ -11,7 +11,7 @@
   <div th:fragment="panel" class="p-3 space-y-4"
        th:with="s=${agg.stats}">
     <header class="flex items-center justify-between">
-      <h1 class="font-bold" th:text="'☕ 커피 · ' + ${teamName}">집계</h1>
+      <h1 class="font-bold" th:text="${placeName} + ' · ' + ${teamName}">집계</h1>
       <button class="btn btn-sm btn-primary" onclick="copySummary(event)">주문 요약 복사</button>
     </header>
 
@@ -40,7 +40,9 @@
             th:text="'🔔 미주문 ' + ${agg.missing.size()} + '명 · ' + ${#strings.listJoin(agg.missing, ', ')}">🔔 미주문 2명 · 홍길동, 김철수</span>
     </div>
 
-    <section>
+    <div th:if="${agg.byMenu.isEmpty()}" class="empty-state">아직 주문이 없어요 ☕</div>
+
+    <section th:unless="${agg.byMenu.isEmpty()}">
       <h2 class="font-semibold mb-2">메뉴별</h2>
       <div th:each="m : ${agg.byMenu}" class="card bg-base-200 p-3 mb-2">
         <div class="flex justify-between"><span th:text="${m.name}">아메리카노</span>
@@ -52,19 +54,22 @@
       </div>
     </section>
 
-    <section>
+    <section th:unless="${agg.byPerson.isEmpty()}">
       <h2 class="font-semibold mb-2">사람별 (배분용)</h2>
-      <div th:each="entry : ${agg.byPerson}" class="border-b py-2">
-        <div class="font-medium" th:text="${entry.key}">백상열</div>
-        <ul class="text-sm opacity-80">
-          <li th:each="line : ${entry.value}"
-              th:text="${line.name} + (${line.optionText.isEmpty()} ? '' : (' · ' + ${line.optionText}))">아메리카노 · ICE</li>
-        </ul>
+      <div th:each="entry : ${agg.byPerson}" class="border-b py-2 flex justify-between items-start gap-2">
+        <div>
+          <div class="font-medium" th:text="${entry.key}">백상열</div>
+          <ul class="text-sm opacity-80">
+            <li th:each="line : ${entry.value}"
+                th:text="${line.name} + (${line.optionText.isEmpty()} ? '' : (' · ' + ${line.optionText}))">아메리카노 · ICE</li>
+          </ul>
+        </div>
+        <button class="btn btn-xs btn-ghost order-del" th:attr="data-person=${entry.key}">삭제</button>
       </div>
     </section>
 
     <div id="sse" hx-ext="sse"
-         th:attr="sse-connect=@{/{c}/{t}/status/stream(c=${category},t=${team})}"></div>
+         th:attr="sse-connect=@{/{c}/{v}/{t}/status/stream(c=${category},v=${vendor},t=${team})}"></div>
   </div>
 </body>
 </html>
