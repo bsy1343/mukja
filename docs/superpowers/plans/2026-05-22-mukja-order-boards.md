@@ -21,7 +21,7 @@ mukja/
 ├── gradle/ gradlew gradlew.bat      # Gradle wrapper
 ├── package.json                     # Tailwind4 + DaisyUI5 CSS 빌드 (Node)
 ├── src/main/css/app.css             # Tailwind 입력 (@import/@plugin/@source)
-├── src/main/java/dev/sybaek/mukja/
+├── src/main/java/com/mukja/
 │   ├── MukjaApplication.java
 │   ├── config/
 │   │   ├── MukjaProperties.java     # @ConfigurationProperties("mukja"): adminPin, teams
@@ -51,7 +51,7 @@ mukja/
 │   ├── data/menus.seed.json
 │   ├── templates/{layout.html, order/*, admin/*}
 │   └── static/{css/app.css, js/order.js}
-├── src/test/java/dev/sybaek/mukja/  # 단위 테스트
+├── src/test/java/com/mukja/  # 단위 테스트
 ├── Dockerfile                       # multi-stage (node css → gradle jar → jre run)
 └── docker-compose.yml
 ```
@@ -64,7 +64,7 @@ mukja/
 
 **Files:**
 - Create: `settings.gradle.kts`, `build.gradle.kts`
-- Create: `src/main/java/dev/sybaek/mukja/MukjaApplication.java`
+- Create: `src/main/java/com/mukja/MukjaApplication.java`
 - Create: `src/main/resources/application.yml`
 
 - [ ] **Step 1: Gradle wrapper 생성**
@@ -89,7 +89,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.7"
 }
 
-group = "dev.sybaek"
+group = "com.mukja"
 version = "0.1.0"
 
 java {
@@ -113,7 +113,7 @@ tasks.withType<Test> { useJUnitPlatform() }
 
 ```java
 // MukjaApplication.java — Spring Boot 애플리케이션 진입점
-package dev.sybaek.mukja;
+package com.mukja;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -155,7 +155,7 @@ Expected: `Started MukjaApplication` 로그, 8080 포트 기동, 에러 없음.
 - [ ] **Step 7: Commit**
 
 ```bash
-git add settings.gradle.kts build.gradle.kts gradlew gradlew.bat gradle src/main/java/dev/sybaek/mukja/MukjaApplication.java src/main/resources/application.yml
+git add settings.gradle.kts build.gradle.kts gradlew gradlew.bat gradle src/main/java/com/mukja/MukjaApplication.java src/main/resources/application.yml
 git commit -m "feat: Spring Boot 3.5 프로젝트 뼈대 (mukja)"
 ```
 
@@ -164,15 +164,15 @@ git commit -m "feat: Spring Boot 3.5 프로젝트 뼈대 (mukja)"
 ### Task 2: JsonStore<T> 제네릭 저장소 (TDD)
 
 **Files:**
-- Create: `src/main/java/dev/sybaek/mukja/common/store/StoreException.java`
-- Create: `src/main/java/dev/sybaek/mukja/common/store/JsonStore.java`
-- Test: `src/test/java/dev/sybaek/mukja/common/store/JsonStoreTest.java`
+- Create: `src/main/java/com/mukja/common/store/StoreException.java`
+- Create: `src/main/java/com/mukja/common/store/JsonStore.java`
+- Test: `src/test/java/com/mukja/common/store/JsonStoreTest.java`
 
 - [ ] **Step 1: 실패하는 테스트 작성**
 
 ```java
 // JsonStoreTest.java — JsonStore 동작 및 동시성 검증
-package dev.sybaek.mukja.common.store;
+package com.mukja.common.store;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -229,7 +229,7 @@ Expected: 컴파일 실패 (JsonStore/StoreException 없음).
 
 ```java
 // StoreException.java — JSON 저장소 I/O 예외
-package dev.sybaek.mukja.common.store;
+package com.mukja.common.store;
 
 public class StoreException extends RuntimeException {
     // 저장소 읽기/쓰기 실패 시 던진다
@@ -241,7 +241,7 @@ public class StoreException extends RuntimeException {
 
 ```java
 // JsonStore.java — 제네릭 JSON 파일 저장소 (RWLock + atomic move)
-package dev.sybaek.mukja.common.store;
+package com.mukja.common.store;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -315,7 +315,7 @@ Expected: 3 tests PASS.
 - [ ] **Step 6: Commit**
 
 ```bash
-git add src/main/java/dev/sybaek/mukja/common/store src/test/java/dev/sybaek/mukja/common/store
+git add src/main/java/com/mukja/common/store src/test/java/com/mukja/common/store
 git commit -m "feat: JsonStore 제네릭 파일 저장소 (RWLock, atomic move)"
 ```
 
@@ -324,27 +324,27 @@ git commit -m "feat: JsonStore 제네릭 파일 저장소 (RWLock, atomic move)"
 ### Task 3: 메뉴 도메인 + JacksonConfig + 시드
 
 **Files:**
-- Create: `src/main/java/dev/sybaek/mukja/menu/domain/{Place,OptionChoice,OptionDef,MenuItem,Category,MenuData}.java`
-- Create: `src/main/java/dev/sybaek/mukja/config/JacksonConfig.java`
-- Create: `src/main/java/dev/sybaek/mukja/config/MukjaProperties.java`
+- Create: `src/main/java/com/mukja/menu/domain/{Place,OptionChoice,OptionDef,MenuItem,Category,MenuData}.java`
+- Create: `src/main/java/com/mukja/config/JacksonConfig.java`
+- Create: `src/main/java/com/mukja/config/MukjaProperties.java`
 - Create: `src/main/resources/data/menus.seed.json`
-- Test: `src/test/java/dev/sybaek/mukja/menu/MenuDataJsonTest.java`
+- Test: `src/test/java/com/mukja/menu/MenuDataJsonTest.java`
 
 - [ ] **Step 1: 도메인 record 작성**
 
 ```java
 // Place.java — 주문 장소
-package dev.sybaek.mukja.menu.domain;
+package com.mukja.menu.domain;
 public record Place(String id, String name, String floor) {}
 ```
 ```java
 // OptionChoice.java — 단일선택 옵션의 보기 (가산금액 extra)
-package dev.sybaek.mukja.menu.domain;
+package com.mukja.menu.domain;
 public record OptionChoice(String id, String name, int extra) {}
 ```
 ```java
 // OptionDef.java — 옵션 정의. type: single|toggle|counter
-package dev.sybaek.mukja.menu.domain;
+package com.mukja.menu.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -353,7 +353,7 @@ public record OptionDef(String label, String type, boolean required,
 ```
 ```java
 // MenuItem.java — 메뉴 항목. fixedTemp가 있으면 temp 옵션을 해당 값으로 고정
-package dev.sybaek.mukja.menu.domain;
+package com.mukja.menu.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -361,7 +361,7 @@ public record MenuItem(int id, String name, int price, List<String> options, Str
 ```
 ```java
 // Category.java — 서브카테고리. group: coffee|food
-package dev.sybaek.mukja.menu.domain;
+package com.mukja.menu.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -369,7 +369,7 @@ public record Category(String id, String name, String group, List<MenuItem> item
 ```
 ```java
 // MenuData.java — 메뉴 루트 (장소, 옵션정의 맵, 카테고리 목록)
-package dev.sybaek.mukja.menu.domain;
+package com.mukja.menu.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 import java.util.Map;
@@ -381,7 +381,7 @@ public record MenuData(Place place, Map<String, OptionDef> optionDefs, List<Cate
 
 ```java
 // JacksonConfig.java — ObjectMapper 커스터마이즈 (JavaTime, KST)
-package dev.sybaek.mukja.config;
+package com.mukja.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -404,7 +404,7 @@ public class JacksonConfig {
 
 ```java
 // MukjaProperties.java — 앱 설정 바인딩 (mukja.*)
-package dev.sybaek.mukja.config;
+package com.mukja.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.util.List;
@@ -448,10 +448,10 @@ public record MukjaProperties(String dataDir, String adminPin, List<Team> teams)
 
 ```java
 // MenuDataJsonTest.java — 시드 JSON이 도메인으로 정상 매핑되는지 검증
-package dev.sybaek.mukja.menu;
+package com.mukja.menu;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.sybaek.mukja.menu.domain.MenuData;
+import com.mukja.menu.domain.MenuData;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 
@@ -480,7 +480,7 @@ Expected: PASS.
 - [ ] **Step 7: Commit**
 
 ```bash
-git add src/main/java/dev/sybaek/mukja/menu/domain src/main/java/dev/sybaek/mukja/config src/main/resources/data/menus.seed.json src/test/java/dev/sybaek/mukja/menu/MenuDataJsonTest.java
+git add src/main/java/com/mukja/menu/domain src/main/java/com/mukja/config src/main/resources/data/menus.seed.json src/test/java/com/mukja/menu/MenuDataJsonTest.java
 git commit -m "feat: 메뉴 도메인 + 시드 JSON + Jackson/Properties 설정"
 ```
 
@@ -489,17 +489,17 @@ git commit -m "feat: 메뉴 도메인 + 시드 JSON + Jackson/Properties 설정"
 ### Task 4: MenuRepository (seed 복사 + 로드)
 
 **Files:**
-- Create: `src/main/java/dev/sybaek/mukja/menu/MenuRepository.java`
-- Test: `src/test/java/dev/sybaek/mukja/menu/MenuRepositoryTest.java`
+- Create: `src/main/java/com/mukja/menu/MenuRepository.java`
+- Test: `src/test/java/com/mukja/menu/MenuRepositoryTest.java`
 
 - [ ] **Step 1: 실패하는 테스트 작성**
 
 ```java
 // MenuRepositoryTest.java — seed 복사 및 로드 검증
-package dev.sybaek.mukja.menu;
+package com.mukja.menu;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.sybaek.mukja.menu.domain.MenuData;
+import com.mukja.menu.domain.MenuData;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -537,12 +537,12 @@ Expected: 컴파일 실패.
 
 ```java
 // MenuRepository.java — menus.json 로드/저장 + 최초 seed 복사
-package dev.sybaek.mukja.menu;
+package com.mukja.menu;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.sybaek.mukja.common.store.JsonStore;
-import dev.sybaek.mukja.config.MukjaProperties;
-import dev.sybaek.mukja.menu.domain.MenuData;
+import com.mukja.common.store.JsonStore;
+import com.mukja.config.MukjaProperties;
+import com.mukja.menu.domain.MenuData;
 import jakarta.annotation.PostConstruct;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Repository;
@@ -599,7 +599,7 @@ Expected: 2 tests PASS.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add src/main/java/dev/sybaek/mukja/menu/MenuRepository.java src/test/java/dev/sybaek/mukja/menu/MenuRepositoryTest.java
+git add src/main/java/com/mukja/menu/MenuRepository.java src/test/java/com/mukja/menu/MenuRepositoryTest.java
 git commit -m "feat: MenuRepository (seed 복사 + 로드/저장)"
 ```
 
@@ -610,17 +610,17 @@ git commit -m "feat: MenuRepository (seed 복사 + 로드/저장)"
 ### Task 5: PriceCalculator + OptionTextBuilder (TDD)
 
 **Files:**
-- Create: `src/main/java/dev/sybaek/mukja/menu/PriceCalculator.java`
-- Create: `src/main/java/dev/sybaek/mukja/menu/OptionTextBuilder.java`
-- Test: `src/test/java/dev/sybaek/mukja/menu/PriceCalculatorTest.java`
+- Create: `src/main/java/com/mukja/menu/PriceCalculator.java`
+- Create: `src/main/java/com/mukja/menu/OptionTextBuilder.java`
+- Test: `src/test/java/com/mukja/menu/PriceCalculatorTest.java`
 
 - [ ] **Step 1: 실패하는 테스트 작성**
 
 ```java
 // PriceCalculatorTest.java — 데이터 주도 가격 계산 + 옵션 텍스트 검증
-package dev.sybaek.mukja.menu;
+package com.mukja.menu;
 
-import dev.sybaek.mukja.menu.domain.*;
+import com.mukja.menu.domain.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -671,11 +671,11 @@ Expected: 컴파일 실패.
 
 ```java
 // PriceCalculator.java — 메뉴 가격 + 선택 옵션의 가산금액 합산 (데이터 주도)
-package dev.sybaek.mukja.menu;
+package com.mukja.menu;
 
-import dev.sybaek.mukja.menu.domain.MenuItem;
-import dev.sybaek.mukja.menu.domain.OptionChoice;
-import dev.sybaek.mukja.menu.domain.OptionDef;
+import com.mukja.menu.domain.MenuItem;
+import com.mukja.menu.domain.OptionChoice;
+import com.mukja.menu.domain.OptionDef;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -715,10 +715,10 @@ public class PriceCalculator {
 
 ```java
 // OptionTextBuilder.java — 선택 옵션을 "ICE·연하게·샷+1" 형태 텍스트로 만든다
-package dev.sybaek.mukja.menu;
+package com.mukja.menu;
 
-import dev.sybaek.mukja.menu.domain.MenuItem;
-import dev.sybaek.mukja.menu.domain.OptionDef;
+import com.mukja.menu.domain.MenuItem;
+import com.mukja.menu.domain.OptionDef;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -758,7 +758,7 @@ Expected: 4 tests PASS. (single에서 "기본"같은 extra 0 보기도 텍스트
 - [ ] **Step 6: Commit**
 
 ```bash
-git add src/main/java/dev/sybaek/mukja/menu/PriceCalculator.java src/main/java/dev/sybaek/mukja/menu/OptionTextBuilder.java src/test/java/dev/sybaek/mukja/menu/PriceCalculatorTest.java
+git add src/main/java/com/mukja/menu/PriceCalculator.java src/main/java/com/mukja/menu/OptionTextBuilder.java src/test/java/com/mukja/menu/PriceCalculatorTest.java
 git commit -m "feat: 데이터 주도 가격 계산 + 옵션 텍스트"
 ```
 
@@ -767,16 +767,16 @@ git commit -m "feat: 데이터 주도 가격 계산 + 옵션 텍스트"
 ### Task 6: 주문 도메인 + OrderRepository (보드/마감/초기화) (TDD)
 
 **Files:**
-- Create: `src/main/java/dev/sybaek/mukja/order/domain/{OrderLine,OrderEntry,BoardData}.java`
-- Create: `src/main/java/dev/sybaek/mukja/order/BoardClosedException.java`
-- Create: `src/main/java/dev/sybaek/mukja/order/OrderRepository.java`
-- Test: `src/test/java/dev/sybaek/mukja/order/OrderRepositoryTest.java`
+- Create: `src/main/java/com/mukja/order/domain/{OrderLine,OrderEntry,BoardData}.java`
+- Create: `src/main/java/com/mukja/order/BoardClosedException.java`
+- Create: `src/main/java/com/mukja/order/OrderRepository.java`
+- Test: `src/test/java/com/mukja/order/OrderRepositoryTest.java`
 
 - [ ] **Step 1: 주문 도메인 record 작성**
 
 ```java
 // OrderLine.java — 주문 1줄 (메뉴 + 선택옵션 + 금액)
-package dev.sybaek.mukja.order.domain;
+package com.mukja.order.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -785,7 +785,7 @@ public record OrderLine(int itemId, String name, int unitPrice,
 ```
 ```java
 // OrderEntry.java — 한 사람의 주문
-package dev.sybaek.mukja.order.domain;
+package com.mukja.order.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -794,7 +794,7 @@ public record OrderEntry(String person, OffsetDateTime submittedAt, List<OrderLi
 ```
 ```java
 // BoardData.java — 주문판 저장 단위 (마감시각 nullable + 주문 목록)
-package dev.sybaek.mukja.order.domain;
+package com.mukja.order.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -809,7 +809,7 @@ public record BoardData(OffsetDateTime closeAt, List<OrderEntry> orders) {
 
 ```java
 // BoardClosedException.java — 마감된 주문판에 제출 시도 시
-package dev.sybaek.mukja.order;
+package com.mukja.order;
 public class BoardClosedException extends RuntimeException {
     public BoardClosedException(String message) { super(message); }
 }
@@ -819,11 +819,11 @@ public class BoardClosedException extends RuntimeException {
 
 ```java
 // OrderRepositoryTest.java — 보드 제출/덮어쓰기/마감차단/초기화 검증
-package dev.sybaek.mukja.order;
+package com.mukja.order;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import dev.sybaek.mukja.order.domain.*;
+import com.mukja.order.domain.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -895,13 +895,13 @@ Expected: 컴파일 실패.
 
 ```java
 // OrderRepository.java — 보드별(카테고리×팀) 주문 저장. 보드마다 독립 JsonStore
-package dev.sybaek.mukja.order;
+package com.mukja.order;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.sybaek.mukja.common.store.JsonStore;
-import dev.sybaek.mukja.config.MukjaProperties;
-import dev.sybaek.mukja.order.domain.BoardData;
-import dev.sybaek.mukja.order.domain.OrderEntry;
+import com.mukja.common.store.JsonStore;
+import com.mukja.config.MukjaProperties;
+import com.mukja.order.domain.BoardData;
+import com.mukja.order.domain.OrderEntry;
 import org.springframework.stereotype.Repository;
 
 import java.nio.file.Path;
@@ -982,7 +982,7 @@ Expected: 5 tests PASS.
 - [ ] **Step 7: Commit**
 
 ```bash
-git add src/main/java/dev/sybaek/mukja/order/domain src/main/java/dev/sybaek/mukja/order/BoardClosedException.java src/main/java/dev/sybaek/mukja/order/OrderRepository.java src/test/java/dev/sybaek/mukja/order/OrderRepositoryTest.java
+git add src/main/java/com/mukja/order/domain src/main/java/com/mukja/order/BoardClosedException.java src/main/java/com/mukja/order/OrderRepository.java src/test/java/com/mukja/order/OrderRepositoryTest.java
 git commit -m "feat: 주문 도메인 + 보드별 OrderRepository (마감/초기화)"
 ```
 
@@ -1051,14 +1051,14 @@ git commit -m "build: Tailwind 4 + DaisyUI 5 CSS 빌드 셋업"
 - Create: `src/main/resources/templates/layout.html`
 - Create: `src/main/resources/templates/order/category.html`
 - Create: `src/main/resources/templates/order/team.html`
-- Create: `src/main/java/dev/sybaek/mukja/order/OrderController.java`
-- Test: `src/test/java/dev/sybaek/mukja/order/NavControllerTest.java`
+- Create: `src/main/java/com/mukja/order/OrderController.java`
+- Test: `src/test/java/com/mukja/order/NavControllerTest.java`
 
 - [ ] **Step 1: 실패하는 컨트롤러 테스트 작성**
 
 ```java
 // NavControllerTest.java — 카테고리/팀 선택 화면 렌더 검증
-package dev.sybaek.mukja.order;
+package com.mukja.order;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1146,9 +1146,9 @@ Expected: 404 또는 컴파일 실패.
 
 ```java
 // OrderController.java — 네비게이션/주문/상태 라우트
-package dev.sybaek.mukja.order;
+package com.mukja.order;
 
-import dev.sybaek.mukja.config.MukjaProperties;
+import com.mukja.config.MukjaProperties;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -1185,7 +1185,7 @@ Expected: 2 tests PASS.
 - [ ] **Step 8: Commit**
 
 ```bash
-git add src/main/resources/templates/layout.html src/main/resources/templates/order/category.html src/main/resources/templates/order/team.html src/main/java/dev/sybaek/mukja/order/OrderController.java src/test/java/dev/sybaek/mukja/order/NavControllerTest.java
+git add src/main/resources/templates/layout.html src/main/resources/templates/order/category.html src/main/resources/templates/order/team.html src/main/java/com/mukja/order/OrderController.java src/test/java/com/mukja/order/NavControllerTest.java
 git commit -m "feat: 공통 레이아웃 + 카테고리/팀 선택 화면"
 ```
 
@@ -1194,22 +1194,22 @@ git commit -m "feat: 공통 레이아웃 + 카테고리/팀 선택 화면"
 ### Task 9: 주문판 화면 + 메뉴 그리드/옵션 모달 fragment
 
 **Files:**
-- Modify: `src/main/java/dev/sybaek/mukja/order/OrderController.java`
-- Create: `src/main/java/dev/sybaek/mukja/menu/MenuService.java`
+- Modify: `src/main/java/com/mukja/order/OrderController.java`
+- Create: `src/main/java/com/mukja/menu/MenuService.java`
 - Create: `src/main/resources/templates/order/board.html`
 - Create: `src/main/resources/templates/order/fragments/menu-grid.html`
 - Create: `src/main/resources/templates/order/fragments/option-modal.html`
-- Test: `src/test/java/dev/sybaek/mukja/order/BoardControllerTest.java`
+- Test: `src/test/java/com/mukja/order/BoardControllerTest.java`
 
 - [ ] **Step 1: MenuService 작성 (카테고리 그룹 필터 + 항목 조회)**
 
 ```java
 // MenuService.java — 메뉴 조회 (카테고리 그룹 필터, 항목/옵션 lookup)
-package dev.sybaek.mukja.menu;
+package com.mukja.menu;
 
-import dev.sybaek.mukja.menu.domain.Category;
-import dev.sybaek.mukja.menu.domain.MenuData;
-import dev.sybaek.mukja.menu.domain.MenuItem;
+import com.mukja.menu.domain.Category;
+import com.mukja.menu.domain.MenuData;
+import com.mukja.menu.domain.MenuItem;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -1246,7 +1246,7 @@ public class MenuService {
 
 ```java
 // BoardControllerTest.java — 주문판 화면과 메뉴 그리드/옵션 fragment 검증
-package dev.sybaek.mukja.order;
+package com.mukja.order;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1294,12 +1294,12 @@ Expected: 404.
 
 ```java
     // (필드 추가)
-    private final dev.sybaek.mukja.menu.MenuService menuService;
+    private final com.mukja.menu.MenuService menuService;
     private final OrderRepository orderRepository;
 
     // (생성자 교체)
     public OrderController(MukjaProperties props,
-                           dev.sybaek.mukja.menu.MenuService menuService,
+                           com.mukja.menu.MenuService menuService,
                            OrderRepository orderRepository) {
         this.props = props;
         this.menuService = menuService;
@@ -1450,7 +1450,7 @@ Expected: 3 tests PASS. (옵션 fragment의 "HOT"은 temp single 보기에서 �
 - [ ] **Step 9: Commit**
 
 ```bash
-git add src/main/java/dev/sybaek/mukja/menu/MenuService.java src/main/java/dev/sybaek/mukja/order/OrderController.java src/main/resources/templates/order/board.html src/main/resources/templates/order/fragments src/test/java/dev/sybaek/mukja/order/BoardControllerTest.java
+git add src/main/java/com/mukja/menu/MenuService.java src/main/java/com/mukja/order/OrderController.java src/main/resources/templates/order/board.html src/main/resources/templates/order/fragments src/test/java/com/mukja/order/BoardControllerTest.java
 git commit -m "feat: 주문판 화면 + 메뉴 그리드/옵션 모달 fragment"
 ```
 
@@ -1459,20 +1459,20 @@ git commit -m "feat: 주문판 화면 + 메뉴 그리드/옵션 모달 fragment"
 ### Task 10: 주문 제출 (OrderService + POST) (TDD)
 
 **Files:**
-- Create: `src/main/java/dev/sybaek/mukja/order/OrderService.java`
-- Modify: `src/main/java/dev/sybaek/mukja/order/OrderController.java`
+- Create: `src/main/java/com/mukja/order/OrderService.java`
+- Modify: `src/main/java/com/mukja/order/OrderController.java`
 - Create: `src/main/resources/static/js/order.js`
-- Test: `src/test/java/dev/sybaek/mukja/order/OrderSubmitTest.java`
+- Test: `src/test/java/com/mukja/order/OrderSubmitTest.java`
 
 - [ ] **Step 1: 실패하는 테스트 작성**
 
 ```java
 // OrderSubmitTest.java — 주문 제출 시 가격 계산·옵션텍스트·저장 검증
-package dev.sybaek.mukja.order;
+package com.mukja.order;
 
-import dev.sybaek.mukja.menu.MenuService;
-import dev.sybaek.mukja.menu.OptionTextBuilder;
-import dev.sybaek.mukja.menu.PriceCalculator;
+import com.mukja.menu.MenuService;
+import com.mukja.menu.OptionTextBuilder;
+import com.mukja.menu.PriceCalculator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -1511,14 +1511,14 @@ Expected: 컴파일 실패.
 
 ```java
 // OrderService.java — 주문 제출 (가격 계산 + 옵션 텍스트 + 저장)
-package dev.sybaek.mukja.order;
+package com.mukja.order;
 
-import dev.sybaek.mukja.menu.MenuService;
-import dev.sybaek.mukja.menu.OptionTextBuilder;
-import dev.sybaek.mukja.menu.PriceCalculator;
-import dev.sybaek.mukja.menu.domain.MenuItem;
-import dev.sybaek.mukja.order.domain.OrderEntry;
-import dev.sybaek.mukja.order.domain.OrderLine;
+import com.mukja.menu.MenuService;
+import com.mukja.menu.OptionTextBuilder;
+import com.mukja.menu.PriceCalculator;
+import com.mukja.menu.domain.MenuItem;
+import com.mukja.order.domain.OrderEntry;
+import com.mukja.order.domain.OrderLine;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -1689,7 +1689,7 @@ Expected: PASS.
 - [ ] **Step 8: Commit**
 
 ```bash
-git add src/main/java/dev/sybaek/mukja/order/OrderService.java src/main/java/dev/sybaek/mukja/order/OrderController.java src/main/resources/static/js/order.js src/test/java/dev/sybaek/mukja/order/OrderSubmitTest.java
+git add src/main/java/com/mukja/order/OrderService.java src/main/java/com/mukja/order/OrderController.java src/main/resources/static/js/order.js src/test/java/com/mukja/order/OrderSubmitTest.java
 git commit -m "feat: 주문 제출 (서버 가격계산) + 장바구니 JS"
 ```
 
@@ -1700,26 +1700,26 @@ git commit -m "feat: 주문 제출 (서버 가격계산) + 장바구니 JS"
 ### Task 11: OrderAggregator (TDD)
 
 **Files:**
-- Create: `src/main/java/dev/sybaek/mukja/order/domain/{MenuAgg,Stats,Aggregation}.java`
-- Create: `src/main/java/dev/sybaek/mukja/order/OrderAggregator.java`
-- Test: `src/test/java/dev/sybaek/mukja/order/OrderAggregatorTest.java`
+- Create: `src/main/java/com/mukja/order/domain/{MenuAgg,Stats,Aggregation}.java`
+- Create: `src/main/java/com/mukja/order/OrderAggregator.java`
+- Test: `src/test/java/com/mukja/order/OrderAggregatorTest.java`
 
 - [ ] **Step 1: 집계 결과 record 작성**
 
 ```java
 // MenuAgg.java — 메뉴별 집계 (총 잔수 + 옵션 분해)
-package dev.sybaek.mukja.order.domain;
+package com.mukja.order.domain;
 import java.util.Map;
 public record MenuAgg(String name, int totalCount, Map<String, Integer> optionBreakdown) {}
 ```
 ```java
 // Stats.java — 전체 통계
-package dev.sybaek.mukja.order.domain;
+package com.mukja.order.domain;
 public record Stats(int people, int cups, int totalAmount, int perPersonAmount) {}
 ```
 ```java
 // Aggregation.java — 집계 결과 묶음
-package dev.sybaek.mukja.order.domain;
+package com.mukja.order.domain;
 import java.util.List;
 import java.util.Map;
 public record Aggregation(List<MenuAgg> byMenu, Map<String, List<OrderLine>> byPerson,
@@ -1730,9 +1730,9 @@ public record Aggregation(List<MenuAgg> byMenu, Map<String, List<OrderLine>> byP
 
 ```java
 // OrderAggregatorTest.java — 메뉴별/사람별 집계 + 요약 텍스트 검증
-package dev.sybaek.mukja.order;
+package com.mukja.order;
 
-import dev.sybaek.mukja.order.domain.*;
+import com.mukja.order.domain.*;
 import org.junit.jupiter.api.Test;
 
 import java.time.OffsetDateTime;
@@ -1779,9 +1779,9 @@ Expected: 컴파일 실패.
 
 ```java
 // OrderAggregator.java — 보드 주문을 메뉴별/사람별로 집계하고 요약 텍스트를 만든다
-package dev.sybaek.mukja.order;
+package com.mukja.order;
 
-import dev.sybaek.mukja.order.domain.*;
+import com.mukja.order.domain.*;
 import org.springframework.stereotype.Component;
 
 import java.text.NumberFormat;
@@ -1851,7 +1851,7 @@ Expected: PASS.
 - [ ] **Step 6: Commit**
 
 ```bash
-git add src/main/java/dev/sybaek/mukja/order/domain/MenuAgg.java src/main/java/dev/sybaek/mukja/order/domain/Stats.java src/main/java/dev/sybaek/mukja/order/domain/Aggregation.java src/main/java/dev/sybaek/mukja/order/OrderAggregator.java src/test/java/dev/sybaek/mukja/order/OrderAggregatorTest.java
+git add src/main/java/com/mukja/order/domain/MenuAgg.java src/main/java/com/mukja/order/domain/Stats.java src/main/java/com/mukja/order/domain/Aggregation.java src/main/java/com/mukja/order/OrderAggregator.java src/test/java/com/mukja/order/OrderAggregatorTest.java
 git commit -m "feat: OrderAggregator (메뉴별/사람별 집계 + 요약 텍스트)"
 ```
 
@@ -1860,15 +1860,15 @@ git commit -m "feat: OrderAggregator (메뉴별/사람별 집계 + 요약 텍스
 ### Task 12: 집계 화면 + summary.txt
 
 **Files:**
-- Modify: `src/main/java/dev/sybaek/mukja/order/OrderController.java`
+- Modify: `src/main/java/com/mukja/order/OrderController.java`
 - Create: `src/main/resources/templates/order/status.html`
-- Test: `src/test/java/dev/sybaek/mukja/order/StatusControllerTest.java`
+- Test: `src/test/java/com/mukja/order/StatusControllerTest.java`
 
 - [ ] **Step 1: 실패하는 테스트 작성**
 
 ```java
 // StatusControllerTest.java — 집계 화면 및 summary.txt 검증
-package dev.sybaek.mukja.order;
+package com.mukja.order;
 
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1922,7 +1922,7 @@ Expected: 404.
     // (필드) private final OrderAggregator aggregator;  // 생성자에도 추가
 
     // 보드 집계 결과를 만든다 (헬퍼)
-    private dev.sybaek.mukja.order.domain.Aggregation aggregate(String category, String team) {
+    private com.mukja.order.domain.Aggregation aggregate(String category, String team) {
         var data = menuService.data();
         String place = data.place() != null ? data.place().name() : "";
         return aggregator.aggregate(place, "커피", teamName(team), orderRepository.read(category, team));
@@ -2011,7 +2011,7 @@ Expected: 2 tests PASS.
 - [ ] **Step 6: Commit**
 
 ```bash
-git add src/main/java/dev/sybaek/mukja/order/OrderController.java src/main/resources/templates/order/status.html src/test/java/dev/sybaek/mukja/order/StatusControllerTest.java
+git add src/main/java/com/mukja/order/OrderController.java src/main/resources/templates/order/status.html src/test/java/com/mukja/order/StatusControllerTest.java
 git commit -m "feat: 집계/발주 화면 + summary.txt"
 ```
 
@@ -2020,17 +2020,17 @@ git commit -m "feat: 집계/발주 화면 + summary.txt"
 ### Task 13: 보드별 SSE 실시간 갱신
 
 **Files:**
-- Create: `src/main/java/dev/sybaek/mukja/order/sse/OrderSseService.java`
-- Modify: `src/main/java/dev/sybaek/mukja/order/OrderController.java` (stream 엔드포인트 + broadcast 호출)
-- Modify: `src/main/java/dev/sybaek/mukja/order/OrderService.java` (제출 후 broadcast)
+- Create: `src/main/java/com/mukja/order/sse/OrderSseService.java`
+- Modify: `src/main/java/com/mukja/order/OrderController.java` (stream 엔드포인트 + broadcast 호출)
+- Modify: `src/main/java/com/mukja/order/OrderService.java` (제출 후 broadcast)
 - Modify: `src/main/resources/static/js/order.js` (EventSource 구독)
-- Test: `src/test/java/dev/sybaek/mukja/order/OrderSseServiceTest.java`
+- Test: `src/test/java/com/mukja/order/OrderSseServiceTest.java`
 
 - [ ] **Step 1: 실패하는 테스트 작성**
 
 ```java
 // OrderSseServiceTest.java — 보드별 emitter 등록/브로드캐스트 검증
-package dev.sybaek.mukja.order.sse;
+package com.mukja.order.sse;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -2058,7 +2058,7 @@ Expected: 컴파일 실패.
 
 ```java
 // OrderSseService.java — 보드별 SseEmitter 관리 및 주문 변경 broadcast
-package dev.sybaek.mukja.order.sse;
+package com.mukja.order.sse;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -2108,7 +2108,7 @@ Expected: PASS.
 `OrderController.java`에 추가 (OrderSseService 주입):
 
 ```java
-    // (필드) private final dev.sybaek.mukja.order.sse.OrderSseService sse;  // 생성자에도 추가
+    // (필드) private final com.mukja.order.sse.OrderSseService sse;  // 생성자에도 추가
 
     // SSE 구독 (보드별)
     @GetMapping("/{category}/{team}/status/stream")
@@ -2149,7 +2149,7 @@ Expected: 전체 PASS. 수동: 두 탭에서 `/coffee/sa`(주문)과 `/coffee/sa
 - [ ] **Step 8: Commit**
 
 ```bash
-git add src/main/java/dev/sybaek/mukja/order/sse src/main/java/dev/sybaek/mukja/order/OrderController.java src/main/java/dev/sybaek/mukja/order/OrderService.java src/main/resources/static/js/order.js src/test/java/dev/sybaek/mukja/order/OrderSseServiceTest.java
+git add src/main/java/com/mukja/order/sse src/main/java/com/mukja/order/OrderController.java src/main/java/com/mukja/order/OrderService.java src/main/resources/static/js/order.js src/test/java/com/mukja/order/OrderSseServiceTest.java
 git commit -m "feat: 보드별 SSE 실시간 갱신 + 폴링 폴백"
 ```
 
@@ -2160,14 +2160,14 @@ git commit -m "feat: 보드별 SSE 실시간 갱신 + 폴링 폴백"
 ### Task 14: 마감 설정/해제 + 초기화 엔드포인트
 
 **Files:**
-- Modify: `src/main/java/dev/sybaek/mukja/order/OrderController.java`
-- Test: `src/test/java/dev/sybaek/mukja/order/DeadlineResetControllerTest.java`
+- Modify: `src/main/java/com/mukja/order/OrderController.java`
+- Test: `src/test/java/com/mukja/order/DeadlineResetControllerTest.java`
 
 - [ ] **Step 1: 실패하는 테스트 작성**
 
 ```java
 // DeadlineResetControllerTest.java — 마감 설정/해제/초기화 엔드포인트 검증
-package dev.sybaek.mukja.order;
+package com.mukja.order;
 
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -2253,7 +2253,7 @@ Expected: 2 tests PASS.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add src/main/java/dev/sybaek/mukja/order/OrderController.java src/test/java/dev/sybaek/mukja/order/DeadlineResetControllerTest.java
+git add src/main/java/com/mukja/order/OrderController.java src/test/java/com/mukja/order/DeadlineResetControllerTest.java
 git commit -m "feat: 마감 설정/해제 + 초기화 엔드포인트 (PIN 없음)"
 ```
 
@@ -2262,17 +2262,17 @@ git commit -m "feat: 마감 설정/해제 + 초기화 엔드포인트 (PIN 없�
 ### Task 15: PIN 인터셉터 + 관리자 메뉴 CRUD
 
 **Files:**
-- Create: `src/main/java/dev/sybaek/mukja/config/AdminPinInterceptor.java`
-- Create: `src/main/java/dev/sybaek/mukja/config/WebConfig.java`
-- Create: `src/main/java/dev/sybaek/mukja/admin/AdminController.java`
+- Create: `src/main/java/com/mukja/config/AdminPinInterceptor.java`
+- Create: `src/main/java/com/mukja/config/WebConfig.java`
+- Create: `src/main/java/com/mukja/admin/AdminController.java`
 - Create: `src/main/resources/templates/admin/{login.html,index.html}`
-- Test: `src/test/java/dev/sybaek/mukja/admin/AdminPinTest.java`
+- Test: `src/test/java/com/mukja/admin/AdminPinTest.java`
 
 - [ ] **Step 1: 실패하는 테스트 작성**
 
 ```java
 // AdminPinTest.java — PIN 없이 /admin 접근 차단, 올바른 PIN 후 접근 허용
-package dev.sybaek.mukja.admin;
+package com.mukja.admin;
 
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
@@ -2311,7 +2311,7 @@ Expected: 실패(인터셉터/컨트롤러 없음 → 200 또는 404).
 
 ```java
 // AdminPinInterceptor.java — /admin/** 접근을 PIN 쿠키로 보호
-package dev.sybaek.mukja.config;
+package com.mukja.config;
 
 import jakarta.servlet.http.*;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -2340,7 +2340,7 @@ public class AdminPinInterceptor implements HandlerInterceptor {
 
 ```java
 // WebConfig.java — 인터셉터 등록
-package dev.sybaek.mukja.config;
+package com.mukja.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -2364,9 +2364,9 @@ public class WebConfig implements WebMvcConfigurer {
 
 ```java
 // AdminController.java — 로그인 + 메뉴 관리
-package dev.sybaek.mukja.admin;
+package com.mukja.admin;
 
-import dev.sybaek.mukja.menu.MenuRepository;
+import com.mukja.menu.MenuRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
@@ -2433,7 +2433,7 @@ Expected: 2 tests PASS.
 - [ ] **Step 7: Commit**
 
 ```bash
-git add src/main/java/dev/sybaek/mukja/config/AdminPinInterceptor.java src/main/java/dev/sybaek/mukja/config/WebConfig.java src/main/java/dev/sybaek/mukja/admin src/main/resources/templates/admin src/test/java/dev/sybaek/mukja/admin/AdminPinTest.java
+git add src/main/java/com/mukja/config/AdminPinInterceptor.java src/main/java/com/mukja/config/WebConfig.java src/main/java/com/mukja/admin src/main/resources/templates/admin src/test/java/com/mukja/admin/AdminPinTest.java
 git commit -m "feat: 관리자 PIN 인터셉터 + 메뉴 조회 화면"
 ```
 

@@ -9,7 +9,7 @@ Spring Boot 3.5 + Thymeleaf SSR + HTMX 부분 갱신, 데이터는 보드별 JSO
 ## Build and Run Commands
 - 실행: `./gradlew bootRun` (기본 8080)
 - 테스트: `./gradlew test`
-- Docker: `docker compose up --build`
+- Docker: `docker build -t mukja .` (배포는 CI/Deploy 워크플로우 → self-hosted 러너에서 빌드·기동. 로컬 compose 없음)
 
 > **Node/npm 미사용 프로젝트.** Tailwind 빌드 툴체인·E2E(Playwright)는 제거됨. CSS는 정적 산출물 `src/main/resources/static/css/app.css`(동결, Tailwind/DaisyUI 컴파일 결과)를 그대로 서빙하고, 추가 스타일은 손수 쓴 `app-custom.css`에 평문 CSS로 작성한다. htmx는 `org.webjars.npm:htmx.org`(Gradle 의존성, npm 아님)으로 제공.
 

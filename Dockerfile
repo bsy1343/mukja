@@ -1,23 +1,24 @@
-# DevForge 멀티스테이지 빌드
+# mukja 멀티스테이지 빌드 (Gradle)
 # CI:     docker build --target ci .
-# Deploy: docker build -t devforge . && docker run -d devforge
+# Deploy: docker build -t mukja . && docker run -d mukja
 
-# Stage 1: 빌드
+# Stage 1: 빌드 (실행 가능 jar 생성, 테스트는 ci 스테이지에서)
 FROM eclipse-temurin:21-jdk AS build
 WORKDIR /app
-COPY pom.xml mvnw ./
-COPY .mvn .mvn
-RUN chmod +x mvnw && ./mvnw dependency:go-offline -B
+COPY gradlew settings.gradle.kts build.gradle.kts ./
+COPY gradle gradle
+RUN chmod +x gradlew && ./gradlew --version --no-daemon
 COPY src src
-RUN ./mvnw package -DskipTests -B
+RUN ./gradlew bootJar --no-daemon
 
-# Stage 2: CI 검증 (빌드 + 테스트)
+# Stage 2: CI 검증 (테스트)
 FROM build AS ci
-RUN ./mvnw test -B
+RUN ./gradlew test --no-daemon
 
-# Stage 3: 런타임
+# Stage 3: 런타임 (JRE)
 FROM eclipse-temurin:21-jre AS runtime
 WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
+COPY --from=build /app/build/libs/*.jar app.jar
+ENV TZ=Asia/Seoul
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]

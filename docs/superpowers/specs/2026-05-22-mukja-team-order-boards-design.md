@@ -201,7 +201,7 @@ PRD 5.1 그대로 유지. read(readLock) / write(writeLock, tmp→ATOMIC_MOVE) /
 
 ## 7. 구현 순서 (마일스톤)
 
-1. **M1 — 뼈대 & 이름**: `mukja`로 전체 네이밍(`dev.sybaek.mukja`), `build.gradle.kts`, `application.yml`(teams/pin), `JsonStore<T>`+테스트, `menus.seed.json`(group 포함) 복사, 메뉴 도메인 + 로드 검증.
+1. **M1 — 뼈대 & 이름**: `mukja`로 전체 네이밍(`com.mukja`), `build.gradle.kts`, `application.yml`(teams/pin), `JsonStore<T>`+테스트, `menus.seed.json`(group 포함) 복사, 메뉴 도메인 + 로드 검증.
 2. **M2 — 네비 & 주문자 화면**: layout + Tailwind/DaisyUI, `/` `/{category}` `/{category}/{team}`, 메뉴 그리드/옵션 모달/카트 바 fragment, 가격 계산+테스트, `POST /orders`(보드 저장, 이름 검증), 이름 localStorage.
 3. **M3 — 집계/발주 & 실시간**: `OrderAggregator`+테스트, `/status` `/status/summary.txt`, 보드별 SSE + 폴백 폴링.
 4. **M4 — 당번 컨트롤 & 관리자**: 마감 설정/해제(409 차단 로직), 초기화(확인 다이얼로그), `/admin` PIN + 메뉴 CRUD.

@@ -18,7 +18,7 @@
 
 | 파일 | 역할 | 작업 |
 |---|---|---|
-| `src/main/java/dev/sybaek/mukja/order/OrderController.java` | 라우팅 | Modify (리다이렉트, 모델, status fragment, TopCategory) |
+| `src/main/java/com/mukja/order/OrderController.java` | 라우팅 | Modify (리다이렉트, 모델, status fragment, TopCategory) |
 | `src/main/resources/templates/order/board.html` | 단일 주문판 | Rewrite |
 | `src/main/resources/templates/order/status.html` | 집계 (전체+panel fragment 겸용) | Rewrite |
 | `src/main/resources/templates/order/category.html` | (구) 카테고리 선택 | Delete |
@@ -26,8 +26,8 @@
 | `src/main/resources/templates/layout.html` | 공통 레이아웃 | Modify (app-custom.css 링크) |
 | `src/main/resources/static/css/app-custom.css` | 미컴파일 클래스 보강(드로어/select) | Create |
 | `src/main/resources/static/js/order.js` | 카트/제출/토글/드로어/SSE | Rewrite |
-| `src/test/java/dev/sybaek/mukja/order/NavControllerTest.java` | 리다이렉트/보드 진입 | Rewrite |
-| `src/test/java/dev/sybaek/mukja/order/StatusControllerTest.java` | fragment 응답 | Modify (+1 test) |
+| `src/test/java/com/mukja/order/NavControllerTest.java` | 리다이렉트/보드 진입 | Rewrite |
+| `src/test/java/com/mukja/order/StatusControllerTest.java` | fragment 응답 | Modify (+1 test) |
 | `e2e/tests/order.spec.ts` | 핵심 흐름 | Rewrite |
 | `.gitignore` | 산출물 제외 | Modify (.playwright-mcp 등) |
 
@@ -38,19 +38,19 @@
 ## Task 1: 백엔드 라우팅 + status fragment
 
 **Files:**
-- Modify: `src/main/java/dev/sybaek/mukja/order/OrderController.java`
+- Modify: `src/main/java/com/mukja/order/OrderController.java`
 - Rewrite: `src/main/resources/templates/order/status.html`
 - Delete: `src/main/resources/templates/order/category.html`, `src/main/resources/templates/order/team.html`
-- Rewrite: `src/test/java/dev/sybaek/mukja/order/NavControllerTest.java`
-- Modify: `src/test/java/dev/sybaek/mukja/order/StatusControllerTest.java`
+- Rewrite: `src/test/java/com/mukja/order/NavControllerTest.java`
+- Modify: `src/test/java/com/mukja/order/StatusControllerTest.java`
 
 - [ ] **Step 1: NavControllerTest를 리다이렉트 기대로 교체 (실패하는 테스트)**
 
-`src/test/java/dev/sybaek/mukja/order/NavControllerTest.java` 전체를 교체:
+`src/test/java/com/mukja/order/NavControllerTest.java` 전체를 교체:
 
 ```java
 // NavControllerTest.java — 루트/카테고리 리다이렉트 + 보드 진입 검증
-package dev.sybaek.mukja.order;
+package com.mukja.order;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -265,10 +265,10 @@ Expected: BUILD SUCCESSFUL.
 - [ ] **Step 9: 커밋 체크포인트 (사용자 요청 시에만)**
 
 ```bash
-git add src/main/java/dev/sybaek/mukja/order/OrderController.java \
+git add src/main/java/com/mukja/order/OrderController.java \
   src/main/resources/templates/order/status.html \
-  src/test/java/dev/sybaek/mukja/order/NavControllerTest.java \
-  src/test/java/dev/sybaek/mukja/order/StatusControllerTest.java
+  src/test/java/com/mukja/order/NavControllerTest.java \
+  src/test/java/com/mukja/order/StatusControllerTest.java
 git rm src/main/resources/templates/order/category.html src/main/resources/templates/order/team.html
 git commit -m "feat: 단일보드용 라우팅(리다이렉트)+status fragment, 선택페이지 제거"
 ```
