@@ -9,10 +9,9 @@ Spring Boot 3.5 + Thymeleaf SSR + HTMX 부분 갱신, 데이터는 보드별 JSO
 ## Build and Run Commands
 - 실행: `./gradlew bootRun` (기본 8080)
 - 테스트: `./gradlew test`
-- CSS 빌드: `npm run build:css` (Tailwind 4 + DaisyUI 5 → `src/main/resources/static/css/app.css`)
-- CSS watch: `npm run watch:css`
-- E2E: `cd e2e && npx playwright test` (앱이 8080에서 실행 중이어야 함)
 - Docker: `docker compose up --build`
+
+> **Node/npm 미사용 프로젝트.** Tailwind 빌드 툴체인·E2E(Playwright)는 제거됨. CSS는 정적 산출물 `src/main/resources/static/css/app.css`(동결, Tailwind/DaisyUI 컴파일 결과)를 그대로 서빙하고, 추가 스타일은 손수 쓴 `app-custom.css`에 평문 CSS로 작성한다. htmx는 `org.webjars.npm:htmx.org`(Gradle 의존성, npm 아님)으로 제공.
 
 > 주의: Gradle 래퍼는 8.14 핀(JDK 23 런타임 호환), 컴파일 toolchain은 JDK 21. 시스템에 JDK 21이 없으면 `~/.gradle/gradle.properties`의 `org.gradle.java.installations.paths`로 경로를 지정한다.
 
