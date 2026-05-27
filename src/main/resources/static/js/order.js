@@ -258,18 +258,21 @@
     }
   };
 
-  // 마감 카운트다운 (10분 이내 주황)
+  // 마감 카운트다운 (10분 이내 주황, 마감 종료 시 빨강)
   function startCountdown() {
     const el = document.getElementById('countdown');
     if (!el || !el.dataset.close) return;
     const close = new Date(el.dataset.close).getTime();
-    setInterval(() => {
+    const tick = () => {
       const diff = close - Date.now();
-      if (diff <= 0) { el.textContent = '마감'; el.className = 'deadline-badge'; return; }
+      if (diff <= 0) { el.textContent = '마감'; el.className = 'deadline-badge closed'; return true; }
       const m = Math.floor(diff / 60000), s = Math.floor((diff % 60000) / 1000);
       el.textContent = `${m}:${String(s).padStart(2, '0')}`;
       el.className = 'deadline-badge' + (diff <= 600000 ? ' warn' : '');
-    }, 1000);
+      return false;
+    };
+    if (tick()) return; // 이미 마감이면 인터벌 불필요 (즉시 빨강 표시)
+    const id = setInterval(() => { if (tick()) clearInterval(id); }, 1000);
   }
 
   // 마감 시각 설정

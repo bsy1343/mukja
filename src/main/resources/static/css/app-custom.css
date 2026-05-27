@@ -53,6 +53,7 @@ main.app-shell {
   padding: 5px 11px; border-radius: var(--pill); white-space: nowrap; flex-shrink: 0;
 }
 .deadline-badge.warn { background: var(--hot-bg); color: var(--hot); }
+.deadline-badge.closed { background: #d64545; color: #fff; }   /* 마감 종료 = 빨강 */
 
 /* ── 팀 알약 ────────────────────────── */
 .team-pills { display: flex; gap: 7px; padding: 4px 18px 0; overflow-x: auto; scrollbar-width: none; }
