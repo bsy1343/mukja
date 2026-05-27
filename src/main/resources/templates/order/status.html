@@ -34,10 +34,12 @@
        th:text="'1인당 약 ' + ${#numbers.formatInteger(s.perPersonAmount,0,'COMMA')} + '원'">1인당</p>
 
     <!-- 미주문자 (팀 명단이 있을 때만) -->
-    <div th:if="${agg.expected > 0}" class="text-sm font-medium p-2 bg-base-200">
-      <span th:if="${agg.missing.isEmpty()}">✅ 전원 주문 완료 (<span th:text="${agg.expected}">5</span>명)</span>
-      <span th:unless="${agg.missing.isEmpty()}"
-            th:text="'🔔 미주문 ' + ${agg.missing.size()} + '명 · ' + ${#strings.listJoin(agg.missing, ', ')}">🔔 미주문 2명 · 홍길동, 김철수</span>
+    <div th:if="${agg.expected > 0}" class="text-sm p-2 bg-base-200">
+      <span th:if="${agg.missing.isEmpty()}" class="font-medium">✅ 전원 주문 완료 (<span th:text="${agg.expected}">5</span>명)</span>
+      <div th:unless="${agg.missing.isEmpty()}">
+        <div class="font-medium" th:text="'🔔 미주문 ' + ${agg.missing.size()} + '명'">🔔 미주문 2명</div>
+        <div class="opacity-80 mt-1" th:text="${#strings.listJoin(agg.missing, ', ')}">홍길동, 김철수</div>
+      </div>
     </div>
 
     <div th:if="${agg.byMenu.isEmpty()}" class="empty-state">아직 주문이 없어요 ☕</div>

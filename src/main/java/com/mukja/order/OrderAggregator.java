@@ -52,7 +52,7 @@ public class OrderAggregator {
         List<String> roaster = roster == null ? List.of() : roster;
         List<String> missing = roaster.stream()
                 .filter(n -> n != null && !n.isBlank())
-                .filter(n -> !ordered.contains(n.trim())).toList();
+                .filter(n -> !ordered.contains(n.trim())).sorted().toList(); // 가나다 오름차순
         int expected = (int) roaster.stream().filter(n -> n != null && !n.isBlank()).count();
 
         return new Aggregation(byMenu, byPerson, stats,
