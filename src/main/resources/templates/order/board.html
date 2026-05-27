@@ -44,18 +44,23 @@
          th:href="@{/{c}/{v}/{t2}(c=${category}, v=${vendor}, t2=${t.id})}" th:text="${t.name}">팀</a>
     </nav>
 
-    <!-- 주문자 선택 -->
+    <!-- 현재 팀 세션 표시 -->
+    <div class="session-badge"><span class="dot"></span>현재 <b th:text="${teamName}">ICE</b> 세션</div>
+
+    <!-- 주문자 선택 (가로 슬라이드 알약) -->
     <section class="ident">
       <div class="ident-row">
         <span class="ident-label">주문자 선택</span>
         <span class="ordered-chip">✓ 이미 주문함</span>
       </div>
-      <div class="member-grid">
-        <button th:each="m : ${members}" type="button" class="member-chip"
-                th:attr="data-name=${m}" onclick="selectMember(this)" th:text="${m}">팀원</button>
-        <button type="button" class="member-chip etc" data-name="__etc__" onclick="selectMember(this)">기타…</button>
-        <input id="person" class="name-input" placeholder="이름 직접 입력" style="display:none">
+      <div class="member-scroll">
+        <div class="member-pills" id="member-pills">
+          <button th:each="m : ${members}" type="button" class="member-chip"
+                  th:attr="data-name=${m}" onclick="selectMember(this)" th:text="${m}">팀원</button>
+          <button type="button" class="member-chip etc" data-name="__etc__" onclick="selectMember(this)">기타…</button>
+        </div>
       </div>
+      <input id="person" class="name-input" placeholder="이름 직접 입력" style="display:none">
     </section>
 
     <!-- 주문/집계 토글 -->

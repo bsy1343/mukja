@@ -64,17 +64,37 @@ main.app-shell {
 .team-pill:active { transform: scale(.96); }
 .team-pill.on { background: var(--ink); color: #fff; border-color: var(--ink); font-weight: 700; }
 
+/* ── 현재 팀 세션 표시 ──────────────── */
+.session-badge {
+  display: inline-flex; align-items: center; gap: 7px; margin: 10px 18px 0; width: fit-content;
+  font-size: .78rem; font-weight: 700; color: var(--brand-ink);
+  background: var(--brand-soft); padding: 5px 12px 5px 11px; border-radius: var(--pill);
+}
+.session-badge b { font-weight: 800; }
+.session-badge .dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--brand);
+  box-shadow: 0 0 0 3px var(--brand-soft); animation: sessionPulse 2s ease-in-out infinite;
+}
+@keyframes sessionPulse { 0%,100% { opacity: 1; } 50% { opacity: .45; } }
+
 /* ── 주문자 선택 ────────────────────── */
 .ident { padding: 16px 18px 6px; }
 .ident-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 11px; }
 .ident-label { font-size: 1rem; font-weight: 800; letter-spacing: -.01em; }
 .ordered-chip { font-size: .8rem; font-weight: 700; color: var(--brand); display: none; }
-.member-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+/* 가로 스크롤 + 오른쪽 페이드(슬라이드 가능 힌트). 끝까지 밀면 .at-end로 페이드 숨김 */
+.member-scroll { position: relative; }
+.member-scroll::after {
+  content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 40px; pointer-events: none;
+  background: linear-gradient(to right, transparent, var(--bg)); opacity: 1; transition: opacity .2s;
+}
+.member-scroll.at-end::after { opacity: 0; }
+.member-pills { display: flex; gap: 7px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; padding-bottom: 2px; }
+.member-pills::-webkit-scrollbar { display: none; }
 .member-chip {
-  font-size: .9rem; font-weight: 600; padding: 13px 4px; border-radius: var(--r-sm);
+  flex: 0 0 auto; font-size: .88rem; font-weight: 600; padding: 9px 16px; border-radius: var(--pill);
   border: 1px solid var(--line-2); background: var(--surface); color: var(--ink);
-  cursor: pointer; transition: all .14s; text-align: center; white-space: nowrap;
-  overflow: hidden; text-overflow: ellipsis;
+  cursor: pointer; transition: all .14s; white-space: nowrap;
 }
 .member-chip:active { transform: scale(.95); }
 .member-chip.on {
@@ -84,7 +104,7 @@ main.app-shell {
 .member-chip.etc { color: var(--sub); border-style: dashed; }
 .member-chip.etc.on { color: var(--brand); border-style: solid; }
 .name-input {
-  grid-column: 1 / -1; height: 2.7rem; padding: 0 .9rem; margin-top: 2px;
+  display: block; width: 100%; box-sizing: border-box; height: 2.7rem; padding: 0 .9rem; margin-top: 10px;
   border: 1px solid var(--line-2); border-radius: var(--r-sm); background: var(--surface);
   font-size: .95rem; color: var(--ink); font-family: var(--font);
 }
@@ -143,11 +163,12 @@ main.app-shell {
   display: flex; gap: 9px; padding: 12px 16px calc(14px + env(safe-area-inset-bottom));
   background: linear-gradient(to top, var(--surface) 72%, transparent); z-index: 40;
 }
-.cta-btn {
+.cta-submit, .cta-cancel {
   border: none; border-radius: 14px; padding: 16px; font-size: 1rem; font-weight: 800; cursor: pointer;
-  font-family: var(--font); transition: transform .12s, opacity .12s;
+  font-family: var(--font); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  transition: transform .12s, opacity .12s;
 }
-.cta-btn:active { transform: scale(.985); }
+.cta-submit:active, .cta-cancel:active { transform: scale(.985); }
 .cta-submit { flex: 1; background: var(--brand); color: #fff; }
 .cta-submit:disabled { background: #cbc8bf; color: #fff; cursor: default; }
 .cta-cancel { background: var(--surface); color: var(--sub); border: 1px solid var(--line-2); padding: 16px 20px; }

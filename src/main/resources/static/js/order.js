@@ -26,6 +26,7 @@
       if (chip) applyMember(chip, false);
     }
     refreshMyOrderStatus();
+    setupMemberScroll();
     startCountdown();
     connectSse();
     // 옵션 모달: 바깥(백드롭) 탭하면 닫기 — 안 닫히면 모달이 탭/토글 클릭을 가로챔
@@ -76,10 +77,26 @@
     const input = document.getElementById('person');
     if (input) input.style.display = isEtc ? 'block' : 'none';
     localStorage.setItem(MEMBER_KEY, btn.dataset.name);
+    btn.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' }); // 슬라이드 영역에서 선택 칩 가시화
     if (isEtc && focus) input?.focus();
     refreshMyOrderStatus();
   }
   window.selectMember = function (btn) { applyMember(btn, true); };
+
+  // 주문자 알약 가로 스크롤: 끝까지 밀거나 스크롤 불필요하면 오른쪽 페이드 숨김
+  function setupMemberScroll() {
+    const pills = document.getElementById('member-pills');
+    const scroll = pills?.closest('.member-scroll');
+    if (!pills || !scroll) return;
+    const update = () => {
+      const atEnd = pills.scrollLeft + pills.clientWidth >= pills.scrollWidth - 4;
+      const noScroll = pills.scrollWidth <= pills.clientWidth + 1;
+      scroll.classList.toggle('at-end', atEnd || noScroll);
+    };
+    pills.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+  }
 
   // 메뉴 종류 탭 활성화 (밑줄)
   window.selectTab = function (btn) {

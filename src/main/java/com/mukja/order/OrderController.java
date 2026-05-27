@@ -91,7 +91,7 @@ public class OrderController {
         model.addAttribute("team", team);
         model.addAttribute("teamName", teamName(team));
         model.addAttribute("teams", props.teams());
-        model.addAttribute("members", rosterRepository.membersOf(team));
+        model.addAttribute("members", rosterRepository.membersOf(team).stream().sorted().toList()); // 가나다 오름차순
         model.addAttribute("drawerGroups", drawerGroups());
         model.addAttribute("subCategories", menuService.categoriesOf(vendor));
         model.addAttribute("placeName", vendorName(vendor));
