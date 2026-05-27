@@ -2,7 +2,7 @@
 <div th:fragment="modal" xmlns:th="http://www.thymeleaf.org"
      th:attr="data-item=${item.id},data-price=${item.price},data-name=${item.name},data-fixed-temp=${item.fixedTemp}">
   <h3 class="font-bold text-lg" th:text="${item.name}">아메리카노</h3>
-  <div class="text-sm opacity-70" th:text="${#numbers.formatInteger(item.price,0,'COMMA')} + '원~'">1,600원~</div>
+  <div class="text-sm opacity-70" th:text="${#numbers.formatInteger(item.price,0,'COMMA')} + '원' + (${item.options.isEmpty()} ? '' : '~')">1,600원~</div>
   <form id="opt-form" class="py-2 space-y-3">
     <div th:each="optKey : ${item.options}" th:with="def=${optionDefs.get(optKey)}"
          th:if="${!(optKey == 'temp' and item.fixedTemp != null)}"
