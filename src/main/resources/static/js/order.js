@@ -30,8 +30,10 @@
     startCountdown();
     connectSse();
     // 옵션 모달: 바깥(백드롭) 탭하면 닫기 — 안 닫히면 모달이 탭/토글 클릭을 가로챔
-    const dlg = document.getElementById('opt-dialog');
-    if (dlg) dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+    ['opt-dialog', 'guide-dialog'].forEach(id => {
+      const dlg = document.getElementById(id);
+      if (dlg) dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+    });
   });
 
   // HTMX swap 후 처리: 집계 SSE 재연결 / 메뉴 그리드 뱃지 갱신 / 옵션 모달 초기화
@@ -125,6 +127,13 @@
       if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; }
     }, true);
   }
+
+  // 사용 가이드 모달 (드로어 닫고 열기)
+  window.openGuide = function () {
+    document.body.classList.remove('drawer-open');
+    document.getElementById('guide-dialog')?.showModal();
+  };
+  window.closeGuide = function () { document.getElementById('guide-dialog')?.close(); };
 
   // 메뉴 종류 탭 활성화 (밑줄)
   window.selectTab = function (btn) {

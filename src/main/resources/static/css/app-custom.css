@@ -192,7 +192,15 @@ main.app-shell {
   position: fixed; top: 0; left: 0; bottom: 0; width: 16rem; max-width: 82vw;
   background: var(--surface); box-shadow: 6px 0 30px -8px rgba(40,38,33,.3); z-index: 50;
   transform: translateX(-100%); transition: transform .26s cubic-bezier(.4,0,.2,1); overflow-y: auto;
+  display: flex; flex-direction: column;
 }
+/* 드로어 맨 아래 사용 가이드 버튼 */
+.drawer-guide {
+  margin-top: auto; display: flex; align-items: center; gap: 8px; width: 100%; text-align: left;
+  padding: 15px 20px; border: none; border-top: 1px solid var(--line); background: transparent;
+  color: var(--sub); font-family: var(--font); font-size: .9rem; font-weight: 700; cursor: pointer;
+}
+.drawer-guide:active { background: var(--surface-2); }
 #cat-backdrop { position: fixed; inset: 0; background: rgba(30,28,24,.42); z-index: 40; opacity: 0; pointer-events: none; transition: opacity .26s; }
 /* 열릴 때만 가운데 480 컬럼의 왼쪽 가장자리로 이동 (PC), 모바일은 0 */
 body.drawer-open #cat-drawer { transform: translateX(max(0px, calc(50vw - 240px))); }
@@ -208,6 +216,20 @@ body.drawer-open #cat-backdrop { opacity: 1; pointer-events: auto; }
 /* ── 옵션 모달 ──────────────────────── */
 /* PC에서도 폰처럼: 하단시트가 뷰포트 전체 폭을 먹지 않고 480 컬럼 폭으로 가운데 정렬 */
 .modal-bottom .modal-box, #opt-dialog .modal-box { max-width: 480px; margin-left: auto; margin-right: auto; }
+
+/* ── 사용 가이드 모달 ───────────────── */
+.guide-title { font-size: 1.1rem; font-weight: 800; letter-spacing: -.01em; margin-bottom: 14px; }
+.guide-list { margin: 0; padding-left: 1.5rem; list-style: decimal; display: flex; flex-direction: column; gap: 17px; }
+.guide-list li::marker { color: var(--brand); font-weight: 800; }
+.g-step { display: block; font-size: .96rem; font-weight: 800; color: var(--ink); letter-spacing: -.01em; margin-bottom: 4px; }
+.g-desc { display: block; font-size: .875rem; line-height: 1.55; color: var(--sub); }
+.g-desc b { font-weight: 800; color: var(--ink); }
+.guide-close {
+  margin-top: 18px; width: 100%; padding: 13px; border: none; border-radius: 12px;
+  background: var(--brand); color: #fff; font-weight: 800; font-size: .95rem; font-family: var(--font);
+  cursor: pointer; transition: transform .12s;
+}
+.guide-close:active { transform: scale(.985); }
 .req { color: #c0563f; font-size: .72rem; margin-left: .3rem; font-weight: 700; }
 .step-btn {
   width: 2.1rem; height: 2.1rem; border-radius: var(--pill); border: 1px solid var(--line-2);

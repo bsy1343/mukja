@@ -23,6 +23,7 @@
           <span>준비중</span><span class="soon-tag">soon</span>
         </div>
       </div>
+      <button type="button" class="drawer-guide" onclick="openGuide()">📖 사용 가이드</button>
     </aside>
 
     <!-- 헤더 -->
@@ -95,6 +96,44 @@
     </div>
 
     <dialog id="opt-dialog" class="modal modal-bottom"><div id="opt-content" class="modal-box"></div></dialog>
+
+    <!-- 사용 가이드 모달 -->
+    <dialog id="guide-dialog" class="modal modal-bottom">
+      <div class="modal-box guide-box">
+        <h3 class="guide-title">📖 먹자 사용 가이드</h3>
+        <ol class="guide-list">
+          <li>
+            <span class="g-step">가게 고르기</span>
+            <span class="g-desc">왼쪽 위 <b>☰</b>를 눌러 커피·점심 가게를 선택해요.</span>
+          </li>
+          <li>
+            <span class="g-step">팀 선택</span>
+            <span class="g-desc">상단 팀 버튼에서 본인 팀을 골라요. 현재 팀은 우측 상단 <b>세션</b> 표시로 확인할 수 있어요.</span>
+          </li>
+          <li>
+            <span class="g-step">주문자 선택</span>
+            <span class="g-desc">이름 알약을 좌우로 넘겨 고르거나, <b>기타</b>로 직접 입력해요.</span>
+          </li>
+          <li>
+            <span class="g-step">메뉴 담기</span>
+            <span class="g-desc">메뉴를 누르고 옵션(온도·얼음·샷 등)을 고른 뒤 <b>담기</b> → 하단 <b>주문하기</b>를 눌러요.</span>
+          </li>
+          <li>
+            <span class="g-step">1인 1메뉴</span>
+            <span class="g-desc">새로 담으면 기존 선택이 바뀌어요. 이미 주문했다면 <b>주문 취소</b>가 떠요.</span>
+          </li>
+          <li>
+            <span class="g-step">집계 보기</span>
+            <span class="g-desc">상단 <b>집계</b>에서 메뉴별·사람별 합계와 <b>미주문자</b>를 확인해요. 요약 복사·(점심) <b>전화하기</b>도 여기 있어요.</span>
+          </li>
+          <li>
+            <span class="g-step">마감·초기화</span>
+            <span class="g-desc">당번이 집계 화면에서 마감 시각을 정하면 이후 주문이 막혀요(빨간 <b>마감</b>). 매일 자정에 자동 초기화돼요.</span>
+          </li>
+        </ol>
+        <button type="button" class="guide-close" onclick="closeGuide()">닫기</button>
+      </div>
+    </dialog>
   </div>
 </body>
 </html>
