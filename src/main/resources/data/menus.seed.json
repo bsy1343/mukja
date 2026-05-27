@@ -32,6 +32,18 @@
       "required": false,
       "extra": 500,
       "max": 3
+    },
+    "meal": {
+      "label": "식사 선택",
+      "type": "single",
+      "required": true,
+      "choices": [
+        { "id": "sundubu", "name": "얼큰순두부", "extra": 0 },
+        { "id": "cheonggukjang", "name": "청국장", "extra": 0 },
+        { "id": "chilmul", "name": "칡물냉면", "extra": 0 },
+        { "id": "bibim", "name": "비빔냉면", "extra": 0 },
+        { "id": "kongguksu", "name": "콩국수", "extra": 0 }
+      ]
     }
   },
   "vendors": [
@@ -100,33 +112,127 @@
     {
       "id": "gohyangjip", "name": "고향집삼계탕", "group": "food",
       "categories": [
-        { "id": "gohyangjip-menu", "name": "메뉴", "items": [
+        { "id": "gohyangjip-samgye", "name": "삼계탕", "items": [
           { "id": 1001, "name": "약수삼계탕", "price": 15000, "options": [] },
           { "id": 1002, "name": "한방삼계탕", "price": 18000, "options": [] },
-          { "id": 1003, "name": "왕갈비탕", "price": 18000, "options": [] },
-          { "id": 1004, "name": "전복갈비탕", "price": 28000, "options": [] }
+          { "id": 1003, "name": "녹두삼계탕", "price": 18000, "options": [] },
+          { "id": 1004, "name": "활전복삼계탕", "price": 28000, "options": [] },
+          { "id": 1005, "name": "닭곰탕", "price": 13000, "options": [] },
+          { "id": 1006, "name": "닭죽", "price": 15000, "options": [] }
+        ] },
+        { "id": "gohyangjip-meal", "name": "식사류", "items": [
+          { "id": 1011, "name": "갈비탕", "price": 15000, "options": [] },
+          { "id": 1012, "name": "왕갈비탕", "price": 18000, "options": [] },
+          { "id": 1013, "name": "전복갈비탕", "price": 28000, "options": [] }
         ] }
       ]
     },
     {
       "id": "duhyang", "name": "두향", "group": "food",
       "categories": [
-        { "id": "duhyang-menu", "name": "메뉴", "items": [
-          { "id": 1101, "name": "얼큰순두부정식", "price": 20000, "options": [] },
-          { "id": 1102, "name": "청국장정식", "price": 20000, "options": [] },
-          { "id": 1103, "name": "콩국수정식", "price": 18000, "options": [] }
+        { "id": "duhyang-menu", "name": "정식", "items": [
+          { "id": 1101, "name": "스테이크솥밥 정식", "price": 23000, "options": ["meal"] },
+          { "id": 1102, "name": "규카츠 정식", "price": 25000, "options": ["meal"] },
+          { "id": 1103, "name": "큐브스테이크 정식", "price": 25000, "options": ["meal"] }
         ] }
       ]
     },
-    { "id": "ranban", "name": "란반", "group": "food", "categories": [] },
+    {
+      "id": "ranban", "name": "란반", "group": "food",
+      "categories": [
+        { "id": "ranban-soup", "name": "국물", "items": [
+          { "id": 3001, "name": "똠쌥 (소고기 전골)", "price": 19000, "options": [] },
+          { "id": 3002, "name": "똠얌꿍 (전통 수프)", "price": 14000, "options": [] },
+          { "id": 3003, "name": "똠얌 쌀국수", "price": 13000, "options": [] },
+          { "id": 3004, "name": "꿰띠여우 느어 (소고기 쌀국수)", "price": 13000, "options": [] },
+          { "id": 3005, "name": "꿰띠여우 까이 (닭고기 쌀국수)", "price": 13000, "options": [] },
+          { "id": 3006, "name": "꿰띠여우 까이옌 (닭가슴살 냉쌀국수)", "price": 13000, "options": [] }
+        ] },
+        { "id": "ranban-noodle", "name": "면", "items": [
+          { "id": 3011, "name": "랏나탈래 (해산물 누들)", "price": 13000, "options": [] },
+          { "id": 3012, "name": "팟키마오 (해장 볶음 쌀국수)", "price": 13000, "options": [] },
+          { "id": 3013, "name": "팟씨유 (계란 볶음면)", "price": 13000, "options": [] },
+          { "id": 3014, "name": "팟타이 (태국 볶음면)", "price": 13000, "options": [] }
+        ] },
+        { "id": "ranban-rice", "name": "라이스", "items": [
+          { "id": 3021, "name": "카오카무 덮밥 (족발 덮밥)", "price": 13000, "options": [] },
+          { "id": 3022, "name": "팟카파오무쌉 덮밥 (돼지고기 바질)", "price": 13000, "options": [] },
+          { "id": 3023, "name": "팟카파오꿍 덮밥 (새우 바질)", "price": 15000, "options": [] },
+          { "id": 3024, "name": "카오만 까이 (닭고기 덮밥)", "price": 13000, "options": [] },
+          { "id": 3025, "name": "카오팟 사파롯 (파인애플 볶음밥)", "price": 13000, "options": [] },
+          { "id": 3026, "name": "카오팟 꿍/무 (새우/돼지 볶음밥)", "price": 13000, "options": [] }
+        ] },
+        { "id": "ranban-seafood", "name": "해산물", "items": [
+          { "id": 3031, "name": "꿍 텃 까띠얌 (새우 마늘 튀김)", "price": 29000, "options": [] },
+          { "id": 3032, "name": "뿌 팟 퐁커리 (크랩 볶음 커리)", "price": 19000, "options": [] },
+          { "id": 3033, "name": "꿍 팟 퐁커리 (새우 볶음 커리)", "price": 19000, "options": [] }
+        ] },
+        { "id": "ranban-fried", "name": "볶음", "items": [
+          { "id": 3041, "name": "느어 팟 남만호이 (굴소스 소고기 볶음)", "price": 26000, "options": [] },
+          { "id": 3042, "name": "카무 (족발)", "price": 29000, "options": [] },
+          { "id": 3043, "name": "무쌈찬 텃 (삼겹살 튀김)", "price": 25000, "options": [] },
+          { "id": 3044, "name": "커무양 (목살 구이)", "price": 21000, "options": [] },
+          { "id": 3045, "name": "팟카파오 무쌈 (돼지고기 바질볶음)", "price": 16000, "options": [] },
+          { "id": 3046, "name": "까이쌈롯 (스윗 칠리 치킨)", "price": 25000, "options": [] },
+          { "id": 3047, "name": "까이팟 맷 마무앙 (치킨 캐슈넛)", "price": 25000, "options": [] },
+          { "id": 3048, "name": "팟 팍빵파이댕 (공심채 볶음)", "price": 15000, "options": [] },
+          { "id": 3049, "name": "까이 찌여우 (계란부침)", "price": 15000, "options": [] }
+        ] },
+        { "id": "ranban-appetizer", "name": "샐러드/구이", "items": [
+          { "id": 3061, "name": "얌느어양 (부채살 샐러드)", "price": 21000, "options": [] },
+          { "id": 3062, "name": "얌운센 (당면 샐러드)", "price": 15000, "options": [] },
+          { "id": 3063, "name": "쏨땀 (파파야 샐러드)", "price": 11000, "options": [] },
+          { "id": 3064, "name": "쏨땀텃 (파파야 튀김)", "price": 17000, "options": [] },
+          { "id": 3065, "name": "쏨땀 & 카이텃", "price": 18000, "options": [] },
+          { "id": 3066, "name": "얌맷마무앙 & 카이텃", "price": 17000, "options": [] },
+          { "id": 3067, "name": "꽉빵파이댕 텃 (공심채 튀김)", "price": 18000, "options": [] },
+          { "id": 3068, "name": "버팔로 봉", "price": 15000, "options": [] },
+          { "id": 3069, "name": "무사테 (돼지목살 꼬치)", "price": 15000, "options": [] },
+          { "id": 3070, "name": "쿤치앙 (태국식 소시지 구이)", "price": 16000, "options": [] },
+          { "id": 3071, "name": "텃만꿍 (새우 도넛츠)", "price": 10000, "options": [] },
+          { "id": 3072, "name": "카이 룩 카이 (단짠 계란 튀김)", "price": 9000, "options": [] },
+          { "id": 3073, "name": "짜조 (베트남 튀김롤)", "price": 10000, "options": [] },
+          { "id": 3074, "name": "룩친텃 (피쉬볼 튀김)", "price": 10000, "options": [] }
+        ] },
+        { "id": "ranban-dimsum", "name": "딤섬", "items": [
+          { "id": 3081, "name": "새우 하가우 (5개)", "price": 6000, "options": [] },
+          { "id": 3082, "name": "복주머니 (6개)", "price": 6000, "options": [] }
+        ] }
+      ]
+    },
     {
       "id": "bapsangmeori", "name": "밥상머리", "group": "food",
       "categories": [
-        { "id": "bapsangmeori-menu", "name": "메뉴", "items": [
-          { "id": 1201, "name": "돌솥밥정식", "price": 14000, "options": [] },
-          { "id": 1202, "name": "떡갈비+돌솥밥정식", "price": 20000, "options": [] },
-          { "id": 1203, "name": "황태구이+돌솥밥", "price": 20000, "options": [] },
-          { "id": 1204, "name": "돌게장+돌솥밥", "price": 22000, "options": [] }
+        { "id": "bapsangmeori-jeongsik", "name": "돌솥밥정식", "items": [
+          { "id": 4001, "name": "돌솥밥정식", "price": 15000, "options": [] },
+          { "id": 4002, "name": "떡갈비+돌솥밥", "price": 22000, "options": [] },
+          { "id": 4003, "name": "돌게장(2-3마리)+돌솥밥", "price": 23000, "options": [] },
+          { "id": 4004, "name": "톳돌솥밥", "price": 16000, "options": [] },
+          { "id": 4005, "name": "곤드레돌솥밥", "price": 17000, "options": [] },
+          { "id": 4006, "name": "꼬막돌솥밥", "price": 20000, "options": [] },
+          { "id": 4007, "name": "전복돌솥밥", "price": 20000, "options": [] },
+          { "id": 4008, "name": "굴돌솥밥 (동절기)", "price": 22000, "options": [] },
+          { "id": 4009, "name": "황태구이+돌솥밥", "price": 22000, "options": [] },
+          { "id": 4010, "name": "제육+돌솥밥", "price": 22000, "options": [] }
+        ] },
+        { "id": "bapsangmeori-bibim", "name": "덮밥·비빔밥", "items": [
+          { "id": 4021, "name": "굴+알밥 (동절기)", "price": 16000, "options": [] },
+          { "id": 4022, "name": "알밥", "price": 13000, "options": [] },
+          { "id": 4023, "name": "전주돌솥비빔밥", "price": 13000, "options": [] },
+          { "id": 4024, "name": "제육돌솥덮밥", "price": 14000, "options": [] },
+          { "id": 4025, "name": "산채비빔밥", "price": 12000, "options": [] }
+        ] },
+        { "id": "bapsangmeori-anju", "name": "안주", "items": [
+          { "id": 4031, "name": "제육볶음", "price": 25000, "options": [] },
+          { "id": 4032, "name": "떡갈비 (80g 4개)", "price": 28000, "options": [] },
+          { "id": 4033, "name": "황태구이", "price": 20000, "options": [] },
+          { "id": 4034, "name": "굴전 (동절기)", "price": 28000, "options": [] },
+          { "id": 4035, "name": "돌게장", "price": 28000, "options": [] }
+        ] },
+        { "id": "bapsangmeori-side", "name": "사이드", "items": [
+          { "id": 4041, "name": "떡갈비 (한우안심+돼지갈비살)", "price": 7000, "options": [] },
+          { "id": 4042, "name": "돌게장 (2-3마리)", "price": 8000, "options": [] },
+          { "id": 4043, "name": "계란찜", "price": 6000, "options": [] }
         ] }
       ]
     },

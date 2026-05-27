@@ -34,4 +34,10 @@ class DeadlineResetControllerTest {
         mvc.perform(post("/coffee/kt/dl-team/reset")).andExpect(status().isOk());
         Assertions.assertTrue(repo.read("kt", "dl-team").orders().isEmpty());
     }
+
+    @Test
+    void invalidDeadlineFormatRejected() throws Exception {
+        mvc.perform(post("/coffee/kt/dl-team/deadline").contentType("application/json")
+                .content("{\"time\":\"25:99\"}")).andExpect(status().isBadRequest());
+    }
 }

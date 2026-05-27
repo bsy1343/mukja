@@ -193,19 +193,22 @@ public class OrderController {
     // 마감 시각 설정/해제 (PIN 없음). time이 "HH:MM"이면 오늘 KST 기준으로 설정, null/빈값이면 해제
     @PostMapping("/{category:coffee|food}/{vendor}/{team}/deadline")
     @ResponseBody
-    public String deadline(@PathVariable String category, @PathVariable String vendor,
+    public ResponseEntity<String> deadline(@PathVariable String category, @PathVariable String vendor,
                            @PathVariable String team, @RequestBody DeadlineRequest body) {
-        if (body.time() == null || body.time().isBlank()) {
+        String time = body.time();
+        if (time == null || time.isBlank()) {
             orderRepository.clearDeadline(vendor, team);
-        } else {
-            var parts = body.time().split(":");
+        } else if (time.matches("([01]?\\d|2[0-3]):[0-5]\\d")) {
+            var parts = time.split(":");
             var now = java.time.OffsetDateTime.now(java.time.ZoneId.of("Asia/Seoul"));
             var close = now.withHour(Integer.parseInt(parts[0])).withMinute(Integer.parseInt(parts[1]))
                     .withSecond(0).withNano(0);
             orderRepository.setDeadline(vendor, team, close);
+        } else {
+            return ResponseEntity.badRequest().body("시각 형식은 HH:MM (예: 14:30) 입니다");
         }
         sse.broadcast(vendor, team);
-        return "ok";
+        return ResponseEntity.ok("ok");
     }
 
     // 주문판 초기화 (PIN 없음)

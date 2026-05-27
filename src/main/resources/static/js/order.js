@@ -229,9 +229,12 @@
 
   // 마감 시각 설정
   window.setDeadline = async function () {
-    const v = prompt('마감 시각 (HH:MM)', '14:30'); if (!v) return;
-    await fetch(boardBase() + '/deadline', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ time: v }) });
+    const v = prompt('마감 시각 (HH:MM, 예: 14:30)', '14:30'); if (!v) return;
+    const time = v.trim();
+    if (!/^([01]?\d|2[0-3]):[0-5]\d$/.test(time)) { alert('시각 형식이 올바르지 않아요. HH:MM (예: 14:30)'); return; }
+    const res = await fetch(boardBase() + '/deadline', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ time }) });
+    if (!res.ok) { alert('마감 설정에 실패했어요'); return; }
     location.reload();
   };
   // 마감 해제
