@@ -32,8 +32,15 @@ public class PriceCalculator {
                         .mapToInt(OptionChoice::extra).findFirst().orElse(0);
             }
             case "toggle" -> (Boolean.TRUE.equals(value) && def.extra() != null) ? def.extra() : 0;
-            case "counter" -> ((Number) value).intValue() * def.extra();
+            case "counter" -> intOf(value) * (def.extra() == null ? 0 : def.extra());
             default -> 0;
         };
+    }
+
+    // counter 값은 클라이언트에 따라 숫자(1) 또는 문자열("1")로 올 수 있어 안전 변환한다
+    static int intOf(Object value) {
+        if (value instanceof Number n) return n.intValue();
+        try { return value == null ? 0 : Integer.parseInt(value.toString().trim()); }
+        catch (NumberFormatException e) { return 0; }
     }
 }

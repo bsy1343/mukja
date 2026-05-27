@@ -31,7 +31,7 @@ public class OptionTextBuilder {
                 }
                 case "toggle" -> { if (Boolean.TRUE.equals(value)) parts.add(def.label()); }
                 case "counter" -> {
-                    int n = ((Number) value).intValue();
+                    int n = PriceCalculator.intOf(value); // 숫자/문자열 모두 안전 변환
                     // NOTE: 현재 counter 옵션은 '샷'뿐이라 라벨을 하드코딩한다.
                     // 다른 counter 옵션이 추가되면 OptionDef에 표시용 라벨을 두고 데이터 주도로 바꿀 것.
                     if (n > 0) parts.add("샷+" + n);
