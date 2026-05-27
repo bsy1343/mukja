@@ -4,6 +4,13 @@ spring:
     name: mukja
   jackson:
     time-zone: Asia/Seoul
+  web:
+    resources:
+      chain:
+        strategy:
+          content:
+            enabled: true   # CSS/JS를 내용 해시 URL(/css/app-custom-<hash>.css)로 서빙 → 내용 변경 시 URL이 바뀌어 CDN(Cloudflare) 캐시가 자동 무효화 (옛 CSS 깨짐 방지)
+            paths: /**
 mukja:
   data-dir: ${MUKJA_DATA_DIR:./data}
   admin-pin: ${MUKJA_ADMIN_PIN:1234}
