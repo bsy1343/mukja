@@ -6,4 +6,4 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record Vendor(String id, String name, String group, String floor, List<Category> categories) {}
+public record Vendor(String id, String name, String group, String floor, String phone, List<Category> categories) {}

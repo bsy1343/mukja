@@ -178,6 +178,15 @@ main.app-shell {
 .cta-cancel { background: var(--surface); color: var(--sub); border: 1px solid var(--line-2); padding: 16px 20px; }
 .cta-bar.hidden { display: none; }   /* 집계 모드에서 숨김 (showView) */
 
+/* ── 식당 전화하기 버튼 (집계) ──────── */
+.call-btn {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  width: 100%; padding: 13px; border-radius: 12px; background: var(--brand); color: #fff;
+  font-weight: 800; font-size: .95rem; text-decoration: none; font-family: var(--font);
+  transition: transform .12s;
+}
+.call-btn:active { transform: scale(.985); }
+
 /* ── 가게 드로어 (햄버거) ──────────── */
 #cat-drawer {
   position: fixed; top: 0; left: 0; bottom: 0; width: 16rem; max-width: 82vw;

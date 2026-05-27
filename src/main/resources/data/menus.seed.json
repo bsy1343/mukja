@@ -110,7 +110,7 @@
       ]
     },
     {
-      "id": "gohyangjip", "name": "고향집삼계탕", "group": "food",
+      "id": "gohyangjip", "name": "고향집삼계탕", "group": "food", "phone": "031-715-6542",
       "categories": [
         { "id": "gohyangjip-samgye", "name": "삼계탕", "items": [
           { "id": 1001, "name": "약수삼계탕", "price": 15000, "options": [] },
@@ -128,7 +128,7 @@
       ]
     },
     {
-      "id": "duhyang", "name": "두향", "group": "food",
+      "id": "duhyang", "name": "두향", "group": "food", "phone": "031-718-3344",
       "categories": [
         { "id": "duhyang-menu", "name": "정식", "items": [
           { "id": 1101, "name": "스테이크솥밥 정식", "price": 23000, "options": ["meal"] },
@@ -138,7 +138,7 @@
       ]
     },
     {
-      "id": "ranban", "name": "란반", "group": "food",
+      "id": "ranban", "name": "란반", "group": "food", "phone": "031-717-2705",
       "categories": [
         { "id": "ranban-soup", "name": "국물", "items": [
           { "id": 3001, "name": "똠쌥 (소고기 전골)", "price": 19000, "options": [] },
@@ -201,7 +201,7 @@
       ]
     },
     {
-      "id": "bapsangmeori", "name": "밥상머리", "group": "food",
+      "id": "bapsangmeori", "name": "밥상머리", "group": "food", "phone": "031-712-7166",
       "categories": [
         { "id": "bapsangmeori-jeongsik", "name": "돌솥밥정식", "items": [
           { "id": 4001, "name": "돌솥밥정식", "price": 15000, "options": [] },
@@ -237,7 +237,7 @@
       ]
     },
     {
-      "id": "pureunbada", "name": "푸른바다볼테기", "group": "food",
+      "id": "pureunbada", "name": "푸른바다볼테기", "group": "food", "phone": "031-715-2010",
       "categories": [
         { "id": "pureunbada-tang", "name": "대구탕", "items": [
           { "id": 5001, "name": "맑은대구탕", "price": 13000, "options": [] },
@@ -277,7 +277,7 @@
       ]
     },
     {
-      "id": "yesdon", "name": "예돈", "group": "food",
+      "id": "yesdon", "name": "예돈", "group": "food", "phone": "031-714-4016",
       "categories": [
         { "id": "yesdon-katsu", "name": "돈까스", "items": [
           { "id": 6001, "name": "생등심 돈까스", "price": 14000, "options": [] },
@@ -294,7 +294,7 @@
       ]
     },
     {
-      "id": "lailai", "name": "라이라이", "group": "food",
+      "id": "lailai", "name": "라이라이", "group": "food", "phone": "031-711-1588",
       "categories": [
         { "id": "lailai-noodle", "name": "면류", "items": [
           { "id": 7001, "name": "유니짜장", "price": 8000, "options": [] },

@@ -172,6 +172,7 @@ public class OrderController {
         model.addAttribute("teamName", teamName(team));
         model.addAttribute("placeName", vendorName(vendor));
         model.addAttribute("unit", unitOf(vendor));
+        model.addAttribute("phone", menuService.vendor(vendor).map(Vendor::phone).orElse(null)); // 식당 전화 (커피는 null)
         model.addAttribute("agg", aggregate(vendor, team));
         return hxRequest != null ? "order/status :: panel" : "order/status";
     }

@@ -15,6 +15,10 @@
       <button class="btn btn-sm btn-primary" onclick="copySummary(event)">주문 요약 복사</button>
     </header>
 
+    <!-- 식당 전화하기 (점심 가게만 — phone 있을 때) -->
+    <a th:if="${phone}" th:href="'tel:' + ${phone}" class="call-btn"
+       th:text="'📞 ' + ${placeName} + ' 전화하기  ' + ${phone}">📞 전화하기</a>
+
     <!-- 당번 컨트롤 (주문 화면에서 이동) -->
     <div class="flex gap-1">
       <button class="btn btn-xs flex-1" onclick="setDeadline()">마감 설정</button>
