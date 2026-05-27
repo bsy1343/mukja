@@ -275,6 +275,111 @@
           { "id": 5048, "name": "공기밥", "price": 1000, "options": [] }
         ] }
       ]
+    },
+    {
+      "id": "yesdon", "name": "예돈", "group": "food",
+      "categories": [
+        { "id": "yesdon-katsu", "name": "돈까스", "items": [
+          { "id": 6001, "name": "생등심 돈까스", "price": 14000, "options": [] },
+          { "id": 6002, "name": "생등심 특 돈까스 (곰배기)", "price": 18000, "options": [] }
+        ] },
+        { "id": "yesdon-add", "name": "추가메뉴", "items": [
+          { "id": 6011, "name": "스프", "price": 1000, "options": [] },
+          { "id": 6012, "name": "야채", "price": 1000, "options": [] },
+          { "id": 6013, "name": "공기밥", "price": 1000, "options": [] },
+          { "id": 6014, "name": "음료수", "price": 2000, "options": [] },
+          { "id": 6015, "name": "소주", "price": 5000, "options": [] },
+          { "id": 6016, "name": "맥주", "price": 5000, "options": [] }
+        ] }
+      ]
+    },
+    {
+      "id": "lailai", "name": "라이라이", "group": "food",
+      "categories": [
+        { "id": "lailai-noodle", "name": "면류", "items": [
+          { "id": 7001, "name": "유니짜장", "price": 8000, "options": [] },
+          { "id": 7002, "name": "간짜장", "price": 9000, "options": [] },
+          { "id": 7003, "name": "짬뽕", "price": 10000, "options": [] },
+          { "id": 7004, "name": "삼선간짜장", "price": 11000, "options": [] },
+          { "id": 7005, "name": "삼선우동", "price": 12000, "options": [] },
+          { "id": 7006, "name": "삼선울면", "price": 12000, "options": [] },
+          { "id": 7007, "name": "삼선짬뽕", "price": 13000, "options": [] },
+          { "id": 7008, "name": "차돌짬뽕", "price": 13000, "options": [] },
+          { "id": 7009, "name": "낙지짬뽕", "price": 13000, "options": [] },
+          { "id": 7010, "name": "백짬뽕", "price": 12000, "options": [] },
+          { "id": 7011, "name": "우삼겹쟁반짜장 (1인)", "price": 12000, "options": [] },
+          { "id": 7012, "name": "해물쟁반짜장 (2인)", "price": 22000, "options": [] }
+        ] },
+        { "id": "lailai-rice", "name": "밥류", "items": [
+          { "id": 7021, "name": "새우볶음밥", "price": 10000, "options": [] },
+          { "id": 7022, "name": "게살볶음밥", "price": 11000, "options": [] },
+          { "id": 7023, "name": "삼선볶음밥", "price": 11000, "options": [] },
+          { "id": 7024, "name": "잡채밥", "price": 10000, "options": [] },
+          { "id": 7025, "name": "마파두부밥", "price": 10000, "options": [] },
+          { "id": 7026, "name": "고추잡채밥", "price": 11000, "options": [] },
+          { "id": 7027, "name": "해물특밥", "price": 11000, "options": [] },
+          { "id": 7028, "name": "유산슬밥", "price": 13000, "options": [] },
+          { "id": 7029, "name": "잡탕밥", "price": 15000, "options": [] },
+          { "id": 7030, "name": "군만두 (8pcs)", "price": 6000, "options": [] }
+        ] },
+        { "id": "lailai-set", "name": "세트", "items": [
+          { "id": 7041, "name": "[1인] 탕수육 + 짜장", "price": 22000, "options": [] },
+          { "id": 7042, "name": "[1인] 탕수육 + 간짜장", "price": 23000, "options": [] },
+          { "id": 7043, "name": "[1인] 탕수육 + 짬뽕", "price": 24000, "options": [] },
+          { "id": 7044, "name": "[1인] 탕수육 + 쟁반", "price": 25000, "options": [] },
+          { "id": 7045, "name": "[2인] 탕수육 + 짜장2", "price": 32000, "options": [] },
+          { "id": 7046, "name": "[2인] 탕수육 + 짬뽕/짜장", "price": 34000, "options": [] },
+          { "id": 7047, "name": "[2인] 탕수육 + 간짜장2", "price": 34000, "options": [] },
+          { "id": 7048, "name": "[2인] 탕수육 + 짬뽕/간짜장", "price": 35000, "options": [] },
+          { "id": 7049, "name": "[2인] 탕수육 + 쟁반2인", "price": 36000, "options": [] },
+          { "id": 7050, "name": "[2인요리] 양장피 + 탕수육", "price": 45000, "options": [] },
+          { "id": 7051, "name": "[3인요리] 양장피 + 탕수육 + 칠리새우", "price": 70000, "options": [] },
+          { "id": 7052, "name": "[4인요리] 팔보채 + 탕수육 + 칠리새우 + 고추잡채(꽃빵)", "price": 95000, "options": [] }
+        ] },
+        { "id": "lailai-dish", "name": "요리", "items": [
+          { "id": 7061, "name": "탕수육 (대)", "price": 35000, "options": [] },
+          { "id": 7062, "name": "탕수육 (중)", "price": 28000, "options": [] },
+          { "id": 7063, "name": "탕수육 (소)", "price": 23000, "options": [] },
+          { "id": 7064, "name": "사천탕수육 (대)", "price": 38000, "options": [] },
+          { "id": 7065, "name": "사천탕수육 (중)", "price": 30000, "options": [] },
+          { "id": 7066, "name": "사천탕수육 (소)", "price": 25000, "options": [] },
+          { "id": 7067, "name": "깐풍기 (대)", "price": 35000, "options": [] },
+          { "id": 7068, "name": "깐풍기 (중)", "price": 28000, "options": [] },
+          { "id": 7069, "name": "라조기 (대)", "price": 35000, "options": [] },
+          { "id": 7070, "name": "라조기 (중)", "price": 28000, "options": [] },
+          { "id": 7071, "name": "유린기", "price": 35000, "options": [] },
+          { "id": 7072, "name": "양장피 (대)", "price": 35000, "options": [] },
+          { "id": 7073, "name": "양장피 (중)", "price": 28000, "options": [] },
+          { "id": 7074, "name": "고추잡채 (꽃빵·대)", "price": 35000, "options": [] },
+          { "id": 7075, "name": "고추잡채 (꽃빵·중)", "price": 28000, "options": [] },
+          { "id": 7076, "name": "유산슬 (대)", "price": 35000, "options": [] },
+          { "id": 7077, "name": "유산슬 (중)", "price": 28000, "options": [] },
+          { "id": 7078, "name": "팔보채 (대)", "price": 38000, "options": [] },
+          { "id": 7079, "name": "팔보채 (중)", "price": 30000, "options": [] },
+          { "id": 7080, "name": "칠리새우 (대)", "price": 38000, "options": [] },
+          { "id": 7081, "name": "칠리새우 (중)", "price": 30000, "options": [] },
+          { "id": 7082, "name": "깐풍새우 (대)", "price": 38000, "options": [] },
+          { "id": 7083, "name": "깐풍새우 (중)", "price": 30000, "options": [] },
+          { "id": 7084, "name": "크림새우 (대)", "price": 38000, "options": [] },
+          { "id": 7085, "name": "크림새우 (중)", "price": 30000, "options": [] },
+          { "id": 7086, "name": "장우육 해파리 냉채", "price": 38000, "options": [] },
+          { "id": 7087, "name": "해물 누룽지탕", "price": 38000, "options": [] },
+          { "id": 7088, "name": "항아리 짬뽕 (술국)", "price": 28000, "options": [] }
+        ] },
+        { "id": "lailai-drink", "name": "주류", "items": [
+          { "id": 7101, "name": "참이슬", "price": 5000, "options": [] },
+          { "id": 7102, "name": "처음처럼", "price": 5000, "options": [] },
+          { "id": 7103, "name": "이즈백", "price": 5000, "options": [] },
+          { "id": 7104, "name": "카스", "price": 5000, "options": [] },
+          { "id": 7105, "name": "테라", "price": 5000, "options": [] },
+          { "id": 7106, "name": "칭다오", "price": 7000, "options": [] },
+          { "id": 7107, "name": "이과두주", "price": 5000, "options": [] },
+          { "id": 7108, "name": "고량주", "price": 6000, "options": [] },
+          { "id": 7109, "name": "연태 고량주 (대)", "price": 45000, "options": [] },
+          { "id": 7110, "name": "연태 고량주 (중)", "price": 25000, "options": [] },
+          { "id": 7111, "name": "연태 고량주 (소)", "price": 12000, "options": [] }
+        ] }
+      ]
     }
   ]
 }
