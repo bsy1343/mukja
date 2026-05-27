@@ -48,8 +48,8 @@ class OrderAggregatorTest {
         var agg = new OrderAggregator().aggregate("KT", "커피", "SA팀", board, roster);
 
         assertEquals(4, agg.expected());
-        assertEquals(List.of("홍길동", "이영희"), agg.missing()); // 명단 순서 유지
-        assertTrue(agg.summaryText().contains("미주문 2명: 홍길동, 이영희"));
+        assertEquals(List.of("이영희", "홍길동"), agg.missing()); // 가나다 오름차순
+        assertTrue(agg.summaryText().contains("미주문 2명: 이영희, 홍길동"));
     }
 
     @Test
