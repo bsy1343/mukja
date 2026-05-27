@@ -16,7 +16,7 @@ class MenuRepositoryTest {
         repo.init();
         assertTrue(Files.exists(dir.resolve("menus.json")));
         MenuData data = repo.load();
-        assertEquals(6, data.vendors().size()); // KT + 식당 5개
+        assertEquals(8, data.vendors().size()); // KT + 식당 7개(고향집·두향·란반·밥상머리·푸른바다·예돈·라이라이)
     }
 
     @Test

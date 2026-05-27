@@ -13,7 +13,7 @@ class MenuDataJsonTest {
     void seedJsonDeserializes() throws Exception {
         MenuData data = new ObjectMapper().readValue(
                 new ClassPathResource("data/menus.seed.json").getInputStream(), MenuData.class);
-        assertEquals(6, data.vendors().size()); // KT + 식당 5개
+        assertEquals(8, data.vendors().size()); // KT + 식당 7개(고향집·두향·란반·밥상머리·푸른바다·예돈·라이라이)
         var kt = data.vendors().get(0);
         assertEquals("kt", kt.id());
         assertEquals("coffee", kt.group());
