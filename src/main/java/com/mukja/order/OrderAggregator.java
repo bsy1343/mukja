@@ -31,8 +31,8 @@ public class OrderAggregator {
         for (var line : lines) {
             var acc = accs.computeIfAbsent(line.name(), k -> new MenuAcc());
             acc.count++;
-            String opt = line.optionText().isBlank() ? "기본" : line.optionText();
-            acc.breakdown.merge(opt, 1, Integer::sum);
+            String opt = line.optionText();
+            if (!opt.isBlank()) acc.breakdown.merge(opt, 1, Integer::sum); // 옵션 없는 주문(예: 에스프레소)은 분해에 표시 안 함
         }
         List<MenuAgg> byMenu = accs.entrySet().stream()
                 .map(en -> new MenuAgg(en.getKey(), en.getValue().count, en.getValue().breakdown)).toList();
@@ -70,8 +70,9 @@ public class OrderAggregator {
         for (var m : byMenu) {
             String detail = m.optionBreakdown().entrySet().stream()
                     .map(e -> e.getKey() + " " + e.getValue()).collect(Collectors.joining(", "));
-            sb.append("· ").append(m.name()).append(" ").append(m.totalCount()).append(unit).append(" (")
-              .append(detail).append(")\n");
+            sb.append("· ").append(m.name()).append(" ").append(m.totalCount()).append(unit);
+            if (!detail.isEmpty()) sb.append(" (").append(detail).append(")");
+            sb.append("\n");
         }
         sb.append("합계 ").append(nf.format(stats.totalAmount())).append("원 · ")
           .append(stats.people()).append("명");

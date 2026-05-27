@@ -53,7 +53,7 @@
       <div th:each="m : ${agg.byMenu}" class="card bg-base-200 p-3 mb-2">
         <div class="flex justify-between"><span th:text="${m.name}">아메리카노</span>
           <span class="badge" th:text="${m.totalCount} + ${unit}">5잔</span></div>
-        <div class="text-xs opacity-70">
+        <div class="text-xs opacity-70" th:unless="${m.optionBreakdown.isEmpty()}">
           <span th:each="b, i : ${m.optionBreakdown}"
                 th:text="${b.key} + ' ' + ${b.value} + (${i.last} ? '' : ', ')">ICE 3</span>
         </div>
