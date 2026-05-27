@@ -239,10 +239,40 @@
     {
       "id": "pureunbada", "name": "푸른바다볼테기", "group": "food",
       "categories": [
-        { "id": "pureunbada-menu", "name": "대구탕", "items": [
+        { "id": "pureunbada-tang", "name": "대구탕", "items": [
           { "id": 5001, "name": "맑은대구탕", "price": 13000, "options": [] },
           { "id": 5002, "name": "매운대구탕", "price": 13000, "options": [] },
-          { "id": 5003, "name": "곤이대구탕", "price": 19000, "options": [] }
+          { "id": 5003, "name": "곤이대구탕", "price": 19000, "options": [] },
+          { "id": 5004, "name": "활전복대구탕", "price": 22000, "options": [] },
+          { "id": 5005, "name": "산낙지대구탕", "price": 27000, "options": [] },
+          { "id": 5006, "name": "동태전골 (2인 이상)", "price": 13000, "options": [] }
+        ] },
+        { "id": "pureunbada-jjim", "name": "찜·탕", "items": [
+          { "id": 5021, "name": "볼테기찜/탕 (2인)", "price": 43000, "options": [] },
+          { "id": 5022, "name": "볼테기찜/탕 (3인)", "price": 61000, "options": [] },
+          { "id": 5023, "name": "볼테기찜/탕 (4인)", "price": 79000, "options": [] },
+          { "id": 5024, "name": "시래기코다리찜 (2인)", "price": 32000, "options": [] },
+          { "id": 5025, "name": "시래기코다리찜 (3인)", "price": 47000, "options": [] },
+          { "id": 5026, "name": "시래기코다리찜 (4인)", "price": 62000, "options": [] },
+          { "id": 5027, "name": "아구찜/탕 (2인)", "price": 47000, "options": [] },
+          { "id": 5028, "name": "아구찜/탕 (3인)", "price": 67000, "options": [] },
+          { "id": 5029, "name": "아구찜/탕 (4인)", "price": 87000, "options": [] },
+          { "id": 5030, "name": "해물연포탕 (2인)", "price": 42000, "options": [] },
+          { "id": 5031, "name": "해물연포탕 (3인)", "price": 63000, "options": [] },
+          { "id": 5032, "name": "해물연포탕 (4인)", "price": 84000, "options": [] },
+          { "id": 5033, "name": "해물찜/탕 (2인)", "price": 58000, "options": [] },
+          { "id": 5034, "name": "해물찜/탕 (3인)", "price": 77000, "options": [] },
+          { "id": 5035, "name": "해물찜/탕 (4인)", "price": 96000, "options": [] }
+        ] },
+        { "id": "pureunbada-side", "name": "사이드", "items": [
+          { "id": 5041, "name": "부추전", "price": 11000, "options": [] },
+          { "id": 5042, "name": "곤이추가 (찜·전골 주문시)", "price": 10000, "options": [] },
+          { "id": 5043, "name": "어린이볶음밥/날치알주먹밥", "price": 6000, "options": [] },
+          { "id": 5044, "name": "물만두", "price": 6000, "options": [] },
+          { "id": 5045, "name": "야채추가", "price": 5000, "options": [] },
+          { "id": 5046, "name": "볶음밥", "price": 3000, "options": [] },
+          { "id": 5047, "name": "우동/라면사리", "price": 2000, "options": [] },
+          { "id": 5048, "name": "공기밥", "price": 1000, "options": [] }
         ] }
       ]
     }
