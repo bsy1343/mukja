@@ -96,6 +96,34 @@
     pills.addEventListener('scroll', update, { passive: true });
     window.addEventListener('resize', update);
     update();
+
+    // 마우스 끌기로 가로 스크롤 (데스크톱). 터치는 기본 스크롤 유지
+    // capture/dragging은 실제로 끌기 시작(4px 초과)한 뒤에만 → 일반 클릭은 그대로 선택됨
+    let down = false, startX = 0, startLeft = 0, moved = false;
+    pills.addEventListener('pointerdown', e => {
+      if (e.pointerType !== 'mouse' || e.button !== 0) return;
+      down = true; moved = false; startX = e.clientX; startLeft = pills.scrollLeft;
+    });
+    pills.addEventListener('pointermove', e => {
+      if (!down) return;
+      const dx = e.clientX - startX;
+      if (!moved && Math.abs(dx) > 4) {
+        moved = true; pills.classList.add('dragging');
+        try { pills.setPointerCapture(e.pointerId); } catch (_) {}
+      }
+      if (moved) pills.scrollLeft = startLeft - dx;
+    });
+    const end = e => {
+      if (!down) return;
+      down = false; pills.classList.remove('dragging');
+      try { pills.releasePointerCapture(e.pointerId); } catch (_) {}
+    };
+    pills.addEventListener('pointerup', end);
+    pills.addEventListener('pointercancel', end);
+    // 드래그였으면 칩 선택(click) 무시 — 캡처 단계에서 인라인 onclick 도달 차단
+    pills.addEventListener('click', e => {
+      if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; }
+    }, true);
   }
 
   // 메뉴 종류 탭 활성화 (밑줄)

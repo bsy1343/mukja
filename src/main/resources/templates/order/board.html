@@ -33,9 +33,12 @@
           <span th:text="${placeName}">KT그룹희망나눔재단</span>
           <span class="cup" th:text="${category == 'coffee'} ? '☕' : '🍱'">☕</span>
         </div>
+        <span class="session-badge"><span class="dot"></span><b th:text="${teamName}">ICE</b> 세션</span>
+      </div>
+      <div class="board-sub">
+        <span th:text="${category == 'coffee'} ? '오늘의 커피를 주문해 주세요!' : '오늘의 점심을 주문해 주세요!'">오늘의 커피를 주문해 주세요!</span>
         <span th:if="${closeAt}" id="countdown" class="deadline-badge" th:data-close="${closeAt}">마감</span>
       </div>
-      <div class="board-sub" th:text="${category == 'coffee'} ? '오늘의 커피를 주문해 주세요!' : '오늘의 점심을 주문해 주세요!'">오늘의 커피를 주문해 주세요!</div>
     </header>
 
     <!-- 팀 알약 -->
@@ -43,9 +46,6 @@
       <a th:each="t : ${teams}" class="team-pill" th:classappend="${t.id == team} ? 'on'"
          th:href="@{/{c}/{v}/{t2}(c=${category}, v=${vendor}, t2=${t.id})}" th:text="${t.name}">팀</a>
     </nav>
-
-    <!-- 현재 팀 세션 표시 -->
-    <div class="session-badge"><span class="dot"></span>현재 <b th:text="${teamName}">ICE</b> 세션</div>
 
     <!-- 주문자 선택 (가로 슬라이드 알약) -->
     <section class="ident">
