@@ -25,7 +25,7 @@
     <div class="stats shadow w-full text-center">
       <div class="stat p-2"><div class="stat-title text-xs">인원</div>
         <div class="stat-value text-lg" th:text="${s.people}">8</div></div>
-      <div class="stat p-2"><div class="stat-title text-xs">잔수</div>
+      <div class="stat p-2"><div class="stat-title text-xs" th:text="${unit} + '수'">잔수</div>
         <div class="stat-value text-lg" th:text="${s.cups}">12</div></div>
       <div class="stat p-2"><div class="stat-title text-xs">총액</div>
         <div class="stat-value text-lg" th:text="${#numbers.formatInteger(s.totalAmount,0,'COMMA')}">48,500</div></div>
@@ -46,7 +46,7 @@
       <h2 class="font-semibold mb-2">메뉴별</h2>
       <div th:each="m : ${agg.byMenu}" class="card bg-base-200 p-3 mb-2">
         <div class="flex justify-between"><span th:text="${m.name}">아메리카노</span>
-          <span class="badge" th:text="${m.totalCount} + '잔'">5잔</span></div>
+          <span class="badge" th:text="${m.totalCount} + ${unit}">5잔</span></div>
         <div class="text-xs opacity-70">
           <span th:each="b, i : ${m.optionBreakdown}"
                 th:text="${b.key} + ' ' + ${b.value} + (${i.last} ? '' : ', ')">ICE 3</span>

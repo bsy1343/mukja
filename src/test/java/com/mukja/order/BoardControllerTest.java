@@ -9,6 +9,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -33,5 +34,12 @@ class BoardControllerTest {
     void optionModalFragmentShowsOptions() throws Exception {
         mvc.perform(get("/coffee/kt/ice/menu/102/options")).andExpect(status().isOk())
            .andExpect(content().string(containsString("HOT")));
+    }
+
+    @Test
+    void blankPersonIsRejected() throws Exception {
+        mvc.perform(post("/coffee/kt/ice/orders").contentType("application/json")
+                .content("{\"person\":\"   \",\"lines\":[{\"itemId\":102,\"options\":{\"temp\":\"hot\"}}]}"))
+           .andExpect(status().isBadRequest());
     }
 }

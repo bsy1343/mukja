@@ -19,12 +19,11 @@
         refreshMyOrderStatus();
       });
     }
-    // 팀원 콤보 복원 (현재 팀에 있는 이름일 때만)
-    const memberSel = document.getElementById('member');
-    if (memberSel) {
-      const saved = localStorage.getItem(MEMBER_KEY);
-      if (saved && [...memberSel.options].some(o => o.value === saved)) memberSel.value = saved;
-      onMemberChange();
+    // 팀원 칩 복원 (현재 팀에 있는 이름일 때만)
+    const savedMember = localStorage.getItem(MEMBER_KEY);
+    if (savedMember) {
+      const chip = [...document.querySelectorAll('.member-chip')].find(c => c.dataset.name === savedMember);
+      if (chip) applyMember(chip, false);
     }
     refreshMyOrderStatus();
     startCountdown();
@@ -61,32 +60,41 @@
   // 이미 주문한 사람 목록 (페이지 로드 시 서버가 주입)
   function ordered() { return window.mukjaOrdered || []; }
 
-  // 현재 주문자 이름: 팀원 콤보 값(기타가 아니면), 기타면 직접입력란 값
+  // 현재 주문자 이름: 선택된 팀원 칩. '기타'면 직접입력란 값
   function personName() {
-    const m = document.getElementById('member');
-    if (m && m.value && m.value !== '__etc__') return m.value;
-    const i = document.getElementById('person');
-    return (i && i.value || '').trim();
+    const active = document.querySelector('.member-chip.on');
+    if (!active) return '';
+    if (active.dataset.name === '__etc__') return (document.getElementById('person')?.value || '').trim();
+    return active.dataset.name;
   }
 
-  // 팀원 콤보 변경: '기타' 선택 시 같은 줄에 직접입력란 표시 (콤보는 줄어듦)
-  window.onMemberChange = function () {
-    const m = document.getElementById('member');
-    const person = document.getElementById('person');
-    const isEtc = m && m.value === '__etc__';
-    if (person) person.style.display = isEtc ? '' : 'none';
-    m?.classList.toggle('flex-1', !isEtc);
-    if (m) localStorage.setItem(MEMBER_KEY, m.value);
-    if (isEtc) person?.focus();
+  // 팀원 칩 활성화 ('기타' 선택 시 직접입력란 표시)
+  function applyMember(btn, focus) {
+    document.querySelectorAll('.member-chip').forEach(c => c.classList.remove('on'));
+    btn.classList.add('on');
+    const isEtc = btn.dataset.name === '__etc__';
+    const input = document.getElementById('person');
+    if (input) input.style.display = isEtc ? 'block' : 'none';
+    localStorage.setItem(MEMBER_KEY, btn.dataset.name);
+    if (isEtc && focus) input?.focus();
     refreshMyOrderStatus();
+  }
+  window.selectMember = function (btn) { applyMember(btn, true); };
+
+  // 메뉴 종류 탭 활성화 (밑줄)
+  window.selectTab = function (btn) {
+    document.querySelectorAll('.menu-tab').forEach(t => t.classList.remove('on'));
+    btn.classList.add('on');
   };
 
-  // 이름이 이미 주문한 사람이면 '이미 주문함 + 취소' 표시
+  // 이미 주문한 사람이면 '이미 주문함' 칩 + 하단 '주문 취소' 노출
   function refreshMyOrderStatus() {
-    const el = document.getElementById('my-order-status');
-    if (!el) return;
     const name = personName();
-    el.style.display = (name && ordered().includes(name)) ? 'flex' : 'none';
+    const has = !!name && ordered().includes(name);
+    const chip = document.querySelector('.ordered-chip');
+    if (chip) chip.style.display = has ? 'inline' : 'none';
+    const cancel = document.getElementById('cancel-btn');
+    if (cancel) cancel.style.display = has ? 'block' : 'none';
   }
 
   // 내 주문 취소 (이름 기준 삭제)
@@ -158,6 +166,7 @@
       else if (/^\d+$/.test(v)) options[k] = parseInt(v, 10);
       else options[k] = v;
     }
+    cart.length = 0; // 1인 1개: 새로 담으면 기존 선택을 교체
     cart.push({ itemId: parseInt(root.dataset.item, 10), name: root.dataset.name, options, lineTotal: computePrice() });
     document.getElementById('opt-dialog').close();
     renderCart();
@@ -168,12 +177,10 @@
   function renderCart() {
     const btn = document.getElementById('submit-btn');
     if (!btn) return;
-    if (cart.length === 0) { btn.disabled = true; btn.textContent = '담은 메뉴 없음'; return; }
+    if (cart.length === 0) { btn.disabled = true; btn.textContent = '메뉴를 선택하세요'; return; }
     btn.disabled = false;
     const total = cart.reduce((s, c) => s + (c.lineTotal || 0), 0);
-    const first = cart[0].name;
-    const label = cart.length === 1 ? first : `${first} 외 ${cart.length - 1}건`;
-    btn.textContent = `${label} · ${won(total)}원 주문하기`;
+    btn.textContent = `${cart[0].name} · ${won(total)}원 주문하기`;
   }
 
   // 메뉴 카드에 장바구니 수량 뱃지 + 담김 강조 반영
@@ -198,6 +205,7 @@
       body: JSON.stringify({ person, lines: cart.map(c => ({ itemId: c.itemId, options: c.options })) })
     });
     if (res.status === 409) { alert('마감된 주문판입니다'); return; }
+    if (res.status === 400) { alert('이름을 선택하거나 입력하세요'); return; }
     if (res.ok) {
       alert('주문 완료!');
       if (!ordered().includes(person)) ordered().push(person);
@@ -212,10 +220,10 @@
     const close = new Date(el.dataset.close).getTime();
     setInterval(() => {
       const diff = close - Date.now();
-      if (diff <= 0) { el.textContent = '마감'; el.className = 'badge'; return; }
+      if (diff <= 0) { el.textContent = '마감'; el.className = 'deadline-badge'; return; }
       const m = Math.floor(diff / 60000), s = Math.floor((diff % 60000) / 1000);
       el.textContent = `${m}:${String(s).padStart(2, '0')}`;
-      el.className = 'badge ' + (diff <= 600000 ? 'badge-warning' : 'badge-success');
+      el.className = 'deadline-badge' + (diff <= 600000 ? ' warn' : '');
     }, 1000);
   }
 

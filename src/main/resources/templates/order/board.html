@@ -1,9 +1,9 @@
-<!-- board.html — 단일 주문판 (가게 드로어 + 상단바 + 주문/집계 토글) -->
+<!-- board.html — 단일 주문판 (가게 드로어 · 팀 알약 · 팀원 그리드 · 2열 메뉴 · 하단 CTA) -->
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout :: page('주문', ~{:: #content})}">
 <body>
-  <div id="content" th:fragment="content" class="pb-24"
+  <div id="content" th:fragment="content" class="pb-28"
        th:with="base=@{/{c}/{v}/{t}(c=${category}, v=${vendor}, t=${team})}">
 
     <!-- 이미 주문한 사람 목록 (중복 감지용) -->
@@ -12,61 +12,65 @@
     <!-- 가게 드로어 (커피/점심 > 가게 중첩) -->
     <div id="cat-backdrop" onclick="toggleDrawer()"></div>
     <aside id="cat-drawer">
-      <div class="p-3 font-bold text-lg border-b">뭐 먹자? 🍽️</div>
+      <div class="drawer-title">먹자! 🍽️</div>
       <div th:each="g : ${drawerGroups}">
-        <div class="px-3 pt-3 pb-1 text-xs font-bold opacity-50" th:text="${g.name}">☕ 커피</div>
-        <ul class="menu w-full px-2 pb-1">
-          <li th:each="v : ${g.vendors}">
-            <a th:href="@{/{c}/{v}/{t}(c=${g.id}, v=${v.id}, t=${team})}"
-               th:classappend="${v.id == vendor} ? 'bg-base-200 font-bold'"
-               th:text="${v.name}">가게</a>
-          </li>
-          <li th:if="${g.vendors.isEmpty()}"><span class="opacity-40">준비중</span></li>
-        </ul>
+        <div class="drawer-group" th:text="${g.name}">☕ 커피</div>
+        <a th:each="v : ${g.vendors}"
+           th:href="@{/{c}/{v}/{t}(c=${g.id}, v=${v.id}, t=${team})}"
+           class="drawer-item" th:classappend="${v.id == vendor} ? 'on'"
+           th:text="${v.name}">가게</a>
+        <div th:if="${g.vendors.isEmpty()}" class="drawer-item soon">
+          <span>준비중</span><span class="soon-tag">soon</span>
+        </div>
       </div>
     </aside>
 
-    <!-- 상단 바 -->
-    <header class="sticky top-0 z-10 bg-base-100 border-b">
-      <!-- 1행: 햄버거 · 가게명 · 마감 뱃지 -->
-      <div class="flex items-center gap-2 px-3 pt-3">
+    <!-- 헤더 -->
+    <header class="board-head">
+      <div class="board-head-top">
         <button class="icon-btn" onclick="toggleDrawer()" aria-label="가게 선택">☰</button>
-        <div class="flex-1 min-w-0 font-bold text-base truncate" th:text="${placeName}">KT그룹희망나눔재단</div>
-        <span th:if="${closeAt}" id="countdown" class="badge badge-success" th:data-close="${closeAt}">마감</span>
+        <div class="board-title">
+          <span th:text="${placeName}">KT그룹희망나눔재단</span>
+          <span class="cup" th:text="${category == 'coffee'} ? '☕' : '🍱'">☕</span>
+        </div>
+        <span th:if="${closeAt}" id="countdown" class="deadline-badge" th:data-close="${closeAt}">마감</span>
       </div>
-      <!-- 2행: 주문자 (팀 · 팀원 · 기타 입력 한 줄) -->
-      <div class="flex items-center gap-2 px-3 pt-2">
-        <select class="board-select" onchange="goTeam(this.value)" aria-label="팀">
-          <option th:each="t : ${teams}"
-                  th:value="@{/{c}/{v}/{t2}(c=${category}, v=${vendor}, t2=${t.id})}"
-                  th:selected="${t.id == team}" th:text="${t.name}">팀</option>
-        </select>
-        <select id="member" class="board-select flex-1" onchange="onMemberChange()" aria-label="주문자">
-          <option value="" disabled selected>이름 선택</option>
-          <option th:each="m : ${members}" th:value="${m}" th:text="${m}">팀원</option>
-          <option value="__etc__">기타…</option>
-        </select>
-        <input id="person" class="board-input flex-1" placeholder="이름 입력" style="display:none">
-      </div>
-      <!-- 이미 주문 알림 -->
-      <div id="my-order-status" class="px-3 pt-2 items-center gap-2 text-xs" style="display:none">
-        <span class="ordered-chip">✓ 이미 주문함</span>
-        <button class="btn btn-xs btn-ghost" onclick="cancelOrder()">주문 취소</button>
-      </div>
-      <!-- 3행: 주문/집계 세그먼트 토글 -->
-      <div class="seg mx-3 my-3">
-        <button id="tab-order" type="button" class="seg-btn seg-on" onclick="showView('order')">주문</button>
-        <button id="tab-agg" type="button" class="seg-btn"
-                th:hx-get="${base} + '/status'" hx-target="#agg-view" hx-swap="innerHTML"
-                onclick="showView('agg')">집계</button>
-      </div>
+      <div class="board-sub" th:text="${category == 'coffee'} ? '오늘의 커피를 주문해 주세요!' : '오늘의 점심을 주문해 주세요!'">오늘의 커피를 주문해 주세요!</div>
     </header>
+
+    <!-- 팀 알약 -->
+    <nav class="team-pills">
+      <a th:each="t : ${teams}" class="team-pill" th:classappend="${t.id == team} ? 'on'"
+         th:href="@{/{c}/{v}/{t2}(c=${category}, v=${vendor}, t2=${t.id})}" th:text="${t.name}">팀</a>
+    </nav>
+
+    <!-- 주문자 선택 -->
+    <section class="ident">
+      <div class="ident-row">
+        <span class="ident-label">주문자 선택</span>
+        <span class="ordered-chip">✓ 이미 주문함</span>
+      </div>
+      <div class="member-grid">
+        <button th:each="m : ${members}" type="button" class="member-chip"
+                th:attr="data-name=${m}" onclick="selectMember(this)" th:text="${m}">팀원</button>
+        <button type="button" class="member-chip etc" data-name="__etc__" onclick="selectMember(this)">기타…</button>
+        <input id="person" class="name-input" placeholder="이름 직접 입력" style="display:none">
+      </div>
+    </section>
+
+    <!-- 주문/집계 토글 -->
+    <div class="seg">
+      <button id="tab-order" type="button" class="seg-btn seg-on" onclick="showView('order')">주문</button>
+      <button id="tab-agg" type="button" class="seg-btn"
+              th:hx-get="${base} + '/status'" hx-target="#agg-view" hx-swap="innerHTML"
+              onclick="showView('agg')">집계</button>
+    </div>
 
     <!-- 주문 뷰 -->
     <div id="order-view">
-      <nav th:if="${!subCategories.isEmpty()}" class="flex gap-2 overflow-x-auto p-3">
-        <button th:each="sub, i : ${subCategories}" class="btn btn-sm whitespace-nowrap"
-                th:classappend="${i.first} ? 'btn-primary'"
+      <nav th:if="${!subCategories.isEmpty()}" class="menu-tabs">
+        <button th:each="sub, i : ${subCategories}" type="button" class="menu-tab"
+                th:classappend="${i.first} ? 'on'" onclick="selectTab(this)"
                 th:hx-get="${base} + '/menu?cat=' + ${sub.id}" hx-target="#menu-grid"
                 th:text="${sub.name}">커피</button>
       </nav>
@@ -79,9 +83,10 @@
     <!-- 집계 뷰 (집계 토글 시 panel fragment가 swap됨) -->
     <div id="agg-view" class="hidden"></div>
 
-    <!-- 카트바 (주문 모드에서만) -->
-    <div id="cart-bar" class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] p-3 bg-base-100 border-t">
-      <button id="submit-btn" class="btn btn-primary w-full" onclick="submitOrder()" disabled>담은 메뉴 없음</button>
+    <!-- 하단 CTA -->
+    <div class="cta-bar" id="cart-bar">
+      <button class="cta-cancel" id="cancel-btn" type="button" onclick="cancelOrder()" style="display:none">주문 취소</button>
+      <button class="cta-submit" id="submit-btn" type="button" onclick="submitOrder()" disabled>메뉴를 선택하세요</button>
     </div>
 
     <dialog id="opt-dialog" class="modal modal-bottom"><div id="opt-content" class="modal-box"></div></dialog>

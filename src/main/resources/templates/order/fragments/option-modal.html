@@ -13,8 +13,10 @@
       </div>
       <!-- 단일 선택: 알약 버튼 (가격 인라인) -->
       <div th:if="${def.type == 'single'}" class="flex flex-wrap gap-1 mt-1">
-        <label th:each="ch : ${def.choices}" class="btn btn-sm opt-pill" th:attr="data-extra=${ch.extra}">
-          <input type="radio" class="hidden" th:name="${optKey}" th:value="${ch.id}">
+        <label th:each="ch, chStat : ${def.choices}" class="btn btn-sm opt-pill"
+               th:classappend="${!def.required and chStat.first} ? 'btn-primary'" th:attr="data-extra=${ch.extra}">
+          <input type="radio" class="hidden" th:name="${optKey}" th:value="${ch.id}"
+                 th:checked="${!def.required and chStat.first}">
           <span th:text="${ch.name} + (${ch.extra > 0} ? ' (+' + ${ch.extra} + ')' : '')">HOT</span>
         </label>
       </div>

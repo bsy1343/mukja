@@ -64,6 +64,11 @@ public class OrderController {
         return menuService.vendor(vendorId).map(v -> "coffee".equals(v.group()) ? "커피" : "점심").orElse("");
     }
 
+    // 수량 단위 (커피=잔, 식당=개)
+    private String unitOf(String vendorId) {
+        return menuService.vendor(vendorId).map(v -> "coffee".equals(v.group()) ? "잔" : "개").orElse("잔");
+    }
+
     // 루트 → 커피 첫 가게 보드로 리다이렉트
     @GetMapping("/")
     public String root() {
@@ -134,8 +139,14 @@ public class OrderController {
     @ResponseBody
     public ResponseEntity<String> submit(@PathVariable String category, @PathVariable String vendor,
                                          @PathVariable String team, @RequestBody SubmitRequest body) {
+        if (body.person() == null || body.person().isBlank()) {
+            return ResponseEntity.badRequest().body("이름을 입력하세요");
+        }
+        if (body.lines() == null || body.lines().size() != 1) {
+            return ResponseEntity.badRequest().body("한 번에 메뉴 1개만 주문할 수 있어요");
+        }
         try {
-            orderService.submit(vendor, team, body.person(), body.lines());
+            orderService.submit(vendor, team, body.person().trim(), body.lines());
             return ResponseEntity.ok("ok");
         } catch (BoardClosedException e) {
             return ResponseEntity.status(409).body(e.getMessage());
@@ -148,7 +159,7 @@ public class OrderController {
     // 보드 집계 결과를 만든다 (헬퍼). 보드 키 = 가게(vendor)
     private com.mukja.order.domain.Aggregation aggregate(String vendor, String team) {
         return aggregator.aggregate(vendorName(vendor), groupLabel(vendor), teamName(team),
-                orderRepository.read(vendor, team), rosterRepository.membersOf(team));
+                orderRepository.read(vendor, team), rosterRepository.membersOf(team), unitOf(vendor));
     }
 
     // 집계/발주 화면. HTMX 요청이면 panel fragment, 아니면 전체 페이지
@@ -160,6 +171,7 @@ public class OrderController {
         model.addAttribute("team", team);
         model.addAttribute("teamName", teamName(team));
         model.addAttribute("placeName", vendorName(vendor));
+        model.addAttribute("unit", unitOf(vendor));
         model.addAttribute("agg", aggregate(vendor, team));
         return hxRequest != null ? "order/status :: panel" : "order/status";
     }

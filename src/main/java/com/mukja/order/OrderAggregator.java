@@ -10,14 +10,20 @@ import java.util.stream.Collectors;
 
 @Component
 public class OrderAggregator {
-    // (호환) 팀 명단 없이 집계한다
+    // (호환) 팀 명단·단위 없이 집계 (단위 기본 '잔')
     public Aggregation aggregate(String place, String categoryName, String teamName, BoardData board) {
-        return aggregate(place, categoryName, teamName, board, List.of());
+        return aggregate(place, categoryName, teamName, board, List.of(), "잔");
     }
 
-    // 장소·카테고리·팀 라벨, 보드 데이터, 팀 기대 명단(roster)으로 집계 결과를 만든다
+    // (호환) 단위 기본 '잔'
     public Aggregation aggregate(String place, String categoryName, String teamName,
                                  BoardData board, List<String> roster) {
+        return aggregate(place, categoryName, teamName, board, roster, "잔");
+    }
+
+    // 장소·카테고리·팀 라벨, 보드, 팀 기대 명단(roster), 수량 단위(unit: 잔/개)로 집계 결과를 만든다
+    public Aggregation aggregate(String place, String categoryName, String teamName,
+                                 BoardData board, List<String> roster, String unit) {
         var lines = board.orders().stream().flatMap(o -> o.lines().stream()).toList();
 
         // 메뉴별 집계 (등장 순서 유지)
@@ -50,13 +56,13 @@ public class OrderAggregator {
         int expected = (int) roaster.stream().filter(n -> n != null && !n.isBlank()).count();
 
         return new Aggregation(byMenu, byPerson, stats,
-                summary(place, categoryName, teamName, byMenu, stats, missing, expected),
+                summary(place, categoryName, teamName, byMenu, stats, missing, expected, unit),
                 missing, expected);
     }
 
     // 복사용 요약 텍스트 생성 (명단이 있으면 미주문자 줄 추가)
     private String summary(String place, String categoryName, String teamName,
-                           List<MenuAgg> byMenu, Stats stats, List<String> missing, int expected) {
+                           List<MenuAgg> byMenu, Stats stats, List<String> missing, int expected, String unit) {
         NumberFormat nf = NumberFormat.getInstance(Locale.KOREA);
         StringBuilder sb = new StringBuilder();
         sb.append("[").append(place).append(" · ").append(categoryName)
@@ -64,7 +70,7 @@ public class OrderAggregator {
         for (var m : byMenu) {
             String detail = m.optionBreakdown().entrySet().stream()
                     .map(e -> e.getKey() + " " + e.getValue()).collect(Collectors.joining(", "));
-            sb.append("· ").append(m.name()).append(" ").append(m.totalCount()).append("잔 (")
+            sb.append("· ").append(m.name()).append(" ").append(m.totalCount()).append(unit).append(" (")
               .append(detail).append(")\n");
         }
         sb.append("합계 ").append(nf.format(stats.totalAmount())).append("원 · ")
