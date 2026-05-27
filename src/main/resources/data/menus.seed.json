@@ -236,6 +236,15 @@
         ] }
       ]
     },
-    { "id": "pureunbada", "name": "푸른바다볼테기", "group": "food", "categories": [] }
+    {
+      "id": "pureunbada", "name": "푸른바다볼테기", "group": "food",
+      "categories": [
+        { "id": "pureunbada-menu", "name": "대구탕", "items": [
+          { "id": 5001, "name": "맑은대구탕", "price": 13000, "options": [] },
+          { "id": 5002, "name": "매운대구탕", "price": 13000, "options": [] },
+          { "id": 5003, "name": "곤이대구탕", "price": 19000, "options": [] }
+        ] }
+      ]
+    }
   ]
 }
