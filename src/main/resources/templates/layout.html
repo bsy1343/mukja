@@ -5,6 +5,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title th:text="${title} ?: 'mukja'">mukja</title>
+  <!-- 링크 미리보기 (Open Graph / Twitter Card) — 카카오톡·슬랙 등에서 카드로 표시 -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="먹자">
+  <meta property="og:title" content="먹자 — 사내 커피·점심 주문판">
+  <meta property="og:description" content="팀별 주문판에서 커피·점심을 함께 주문하세요 ☕🍱">
+  <meta property="og:image" content="https://mukja.sybaek.dev/img/og.png">
+  <meta property="og:url" content="https://mukja.sybaek.dev/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="먹자 — 사내 커피·점심 주문판">
+  <meta name="twitter:description" content="팀별 주문판에서 커피·점심을 함께 주문하세요 ☕🍱">
+  <meta name="twitter:image" content="https://mukja.sybaek.dev/img/og.png">
   <link rel="stylesheet" th:href="@{/css/app.css}">
   <link rel="stylesheet" th:href="@{/css/app-custom.css}">
   <script th:src="@{/webjars/htmx.org/2.0.4/dist/htmx.min.js}" defer></script>
