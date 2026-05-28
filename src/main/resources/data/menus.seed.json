@@ -380,6 +380,23 @@
           { "id": 7111, "name": "연태 고량주 (소)", "price": 12000, "options": [] }
         ] }
       ]
+    },
+    {
+      "id": "deungchon", "name": "등촌샤브샤브", "group": "food", "phone": "031-717-0723",
+      "categories": [
+        { "id": "deungchon-set", "name": "세트", "items": [
+          { "id": 8001, "name": "등촌샤브칼국수 SET (소)", "price": 34000, "options": [] },
+          { "id": 8002, "name": "등촌샤브칼국수 SET (중)", "price": 48000, "options": [] },
+          { "id": 8003, "name": "등촌샤브칼국수 SET (대)", "price": 66000, "options": [] },
+          { "id": 8004, "name": "등촌 칼국수 (2인이상·1인분)", "price": 10000, "options": [] }
+        ] },
+        { "id": "deungchon-add", "name": "추가", "items": [
+          { "id": 8011, "name": "샤브추가 (호주산·1인분)", "price": 11000, "options": [] },
+          { "id": 8012, "name": "물만두", "price": 6000, "options": [] },
+          { "id": 8013, "name": "야채추가", "price": 5000, "options": [] },
+          { "id": 8014, "name": "볶음밥", "price": 3500, "options": [] }
+        ] }
+      ]
     }
   ]
 }

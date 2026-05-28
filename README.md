@@ -3,6 +3,21 @@
 사내 커피·점심 주문을 **카테고리 × 팀 단위 상시 주문판**으로 취합하는 모바일 우선 웹앱.
 세션 개념 없이 주문판은 상시 존재하며, 당번이 마감 시각을 설정하고 매일 자정(KST) 자동 초기화로 재사용한다.
 
+## 스크린샷
+
+<table>
+  <tr>
+    <td align="center"><b>주문판</b><br/><sub>가게 × 팀 × 주문자 알약(슬라이드) × 2열 메뉴</sub><br/><img src="docs/screenshots/board.png" width="280"></td>
+    <td align="center"><b>옵션 선택</b><br/><sub>하단시트 모달 — HOT/ICE·얼음·연하게·샷</sub><br/><img src="docs/screenshots/option.png" width="280"></td>
+  </tr>
+  <tr>
+    <td align="center"><b>집계 (커피)</b><br/><sub>통계·미주문자·메뉴별·사람별</sub><br/><img src="docs/screenshots/status.png" width="280"></td>
+    <td align="center"><b>점심 집계 + 전화하기</b><br/><sub>식당 직통 <code>tel:</code> 버튼</sub><br/><img src="docs/screenshots/food-status.png" width="280"></td>
+  </tr>
+</table>
+
+<sub>※ 팀명·주문자 이름은 모자이크 처리되어 있습니다.</sub>
+
 ## 주요 기능
 
 - **주문판 = (가게 × 팀)** — 좌측 가게 드로어, 상단 팀 전환, 주문/집계 토글의 단일 화면
@@ -50,7 +65,7 @@ docker build -t mukja .   # 컨테이너 이미지 빌드
 
 - `menus.seed.json` → `data/menus.json` : 가게·카테고리·메뉴·옵션 정의
   - `group: "coffee" | "food"` 로 상위 구분. 식당은 `phone`으로 전화하기 버튼 노출
-  - 현재 가게: 커피 **KT그룹희망나눔재단** / 점심 **고향집삼계탕·두향·란반·밥상머리·예돈·라이라이·푸른바다볼테기**
+  - 현재 가게: 커피 **KT그룹희망나눔재단** / 점심 **고향집삼계탕·두향·란반·밥상머리·예돈·라이라이·푸른바다볼테기·등촌샤브샤브**
 - `teams.seed.json` → `data/teams.json` : 팀별 주문자 명단
 
 > 메뉴·전화번호·명단을 바꾸려면 seed 수정 후, 운영 서버의 `data/*.json`을 갱신(삭제 후 재기동 시 재복사)한다.

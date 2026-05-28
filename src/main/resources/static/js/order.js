@@ -284,11 +284,13 @@
     const id = setInterval(() => { if (tick()) clearInterval(id); }, 1000);
   }
 
-  // 마감 시각 설정
+  // 마감 시각 설정 (디폴트: 현재 시각 + 30분, HH:MM 자정 넘어가면 자동 wrap)
   window.setDeadline = async function () {
-    const v = prompt('마감 시각 (HH:MM, 예: 14:30)', '14:30'); if (!v) return;
+    const t = new Date(Date.now() + 30 * 60 * 1000);
+    const def = String(t.getHours()).padStart(2, '0') + ':' + String(t.getMinutes()).padStart(2, '0');
+    const v = prompt('마감 시각 (HH:MM, 예: ' + def + ')', def); if (!v) return;
     const time = v.trim();
-    if (!/^([01]?\d|2[0-3]):[0-5]\d$/.test(time)) { alert('시각 형식이 올바르지 않아요. HH:MM (예: 14:30)'); return; }
+    if (!/^([01]?\d|2[0-3]):[0-5]\d$/.test(time)) { alert('시각 형식이 올바르지 않아요. HH:MM (예: ' + def + ')'); return; }
     const res = await fetch(boardBase() + '/deadline', {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ time }) });
     if (!res.ok) { alert('마감 설정에 실패했어요'); return; }
