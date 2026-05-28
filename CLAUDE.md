@@ -4,7 +4,7 @@ This file provides guidance to Claude Code when working with code in this reposi
 
 ## Project Overview
 mukja — 사내 커피/점심 주문을 **가게(vendor) × 팀(team) 단위 상시 주문판**으로 취합하는 모바일 우선 웹앱.
-Spring Boot 3.5.3 + Thymeleaf SSR + HTMX 부분 갱신, 데이터는 보드별 JSON 파일(`JsonStore`, RWLock·atomic move)에 저장. 세션 생명주기 없이 보드는 상시 존재하고, 당번이 마감 시각을 설정하거나 매일 자정(KST) 자동 초기화로 재사용한다. 실시간은 보드별 SSE + 폴링 폴백.
+Spring Boot 3.5.3 + Thymeleaf SSR + HTMX 부분 갱신, 데이터는 보드별 JSON 파일(`JsonStore`, RWLock·atomic move)에 저장. **보드 = 팀별 일일 세션** — 별도 세션 객체 없이 보드 자체가 그 역할을 하며, 당번이 마감 시각을 설정하고 매일 자정(KST)에 자동 초기화돼 재사용된다. 실시간은 보드별 SSE + 폴링 폴백.
 
 ## Build and Run Commands
 - 실행: `./gradlew bootRun` (기본 8080)
@@ -18,7 +18,7 @@ Spring Boot 3.5.3 + Thymeleaf SSR + HTMX 부분 갱신, 데이터는 보드별 J
 ## Architecture
 - **주문판(Board) = (가게 × 팀)** 조합. 저장: `data/orders/{vendor}-{team}.json` (보드마다 독립 `JsonStore`, 독립 락).
 - **가게 레이어**: 상위 그룹 `coffee|food`(URL의 `{category}`) → 가게(`{vendor}`) → 메뉴 카테고리(`{sub}`) → 메뉴 → 옵션. 식당은 `phone` 필드를 가지면 집계의 "전화하기" 버튼 노출.
-- 세션 개념 없음. 마감(`closeAt`) 경과 시 `POST .../orders`는 `BoardClosedException` → 409. 수동 초기화(`reset`)와 매일 00:00 KST 자동 초기화(`BoardResetScheduler`)가 `BoardData.empty()`로 주문·마감을 함께 비운다(`@EnableScheduling`).
+- 별도 세션 객체 없이 **보드가 팀별 일일 세션** 역할. 마감(`closeAt`) 경과 시 `POST .../orders`는 `BoardClosedException` → 409. 수동 초기화(`reset`)와 매일 00:00 KST 자동 초기화(`BoardResetScheduler`)가 `BoardData.empty()`로 주문·마감을 함께 비운다(`@EnableScheduling`).
 - **JSON 접근은 항상 `JsonStore<T>` 경유** (직접 ObjectMapper 호출 금지). API: `read()`, `write(T)`, `mutate(UnaryOperator<T>)` (read-modify-write). 쓰기는 tmp 파일 → `ATOMIC_MOVE`.
 - **데이터 주도 설계**: 가격/옵션텍스트는 `PriceCalculator`/`OptionTextBuilder`가 `menus.json`의 optionDefs로 계산 — menus.json만 바꾸면 화면·계산이 따라온다. counter 옵션은 클라이언트가 숫자/문자열 어떻게 보내도 안전 변환.
 - 실시간: `OrderSseService`(보드별 SseEmitter) + `order.js`의 EventSource 구독, 실패 시 5초 폴링 폴백.
